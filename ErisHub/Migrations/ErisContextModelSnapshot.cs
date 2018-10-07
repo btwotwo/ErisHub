@@ -71,7 +71,7 @@ namespace ErisHub.Migrations
                         .HasColumnName("type")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<bool?>("Unbanned")
+                    b.Property<sbyte?>("Unbanned")
                         .HasColumnName("unbanned")
                         .HasColumnType("tinyint(1)");
 
@@ -201,6 +201,36 @@ namespace ErisHub.Migrations
                     b.ToTable("players");
                 });
 
+            modelBuilder.Entity("ErisHub.Database.Models.Poll", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("int(11)");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnName("end")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnName("question")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnName("start")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnName("type")
+                        .HasColumnType("varchar(16)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("polls");
+                });
+
             modelBuilder.Entity("ErisHub.Database.Models.PollOption", b =>
                 {
                     b.Property<int>("Id")
@@ -231,36 +261,6 @@ namespace ErisHub.Migrations
                         .HasName("index_poll_options_on_poll_id");
 
                     b.ToTable("poll_options");
-                });
-
-            modelBuilder.Entity("ErisHub.Database.Models.Poll", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int(11)");
-
-                    b.Property<DateTime>("End")
-                        .HasColumnName("end")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnName("question")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<DateTime>("Start")
-                        .HasColumnName("start")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnName("type")
-                        .HasColumnType("varchar(16)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("polls");
                 });
 
             modelBuilder.Entity("ErisHub.Database.Models.PollTextReply", b =>
@@ -384,7 +384,7 @@ namespace ErisHub.Migrations
             modelBuilder.Entity("ErisHub.Database.Models.Book", b =>
                 {
                     b.HasOne("ErisHub.Database.Models.Player", "AuthorNavigation")
-                        .WithMany("Book")
+                        .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .HasConstraintName("fk_rails_53d51ce16a");
                 });
@@ -392,7 +392,7 @@ namespace ErisHub.Migrations
             modelBuilder.Entity("ErisHub.Database.Models.PollOption", b =>
                 {
                     b.HasOne("ErisHub.Database.Models.Poll", "Poll")
-                        .WithMany("PollOption")
+                        .WithMany("PollOptions")
                         .HasForeignKey("PollId")
                         .HasConstraintName("fk_rails_aa85becb42");
                 });
@@ -400,12 +400,12 @@ namespace ErisHub.Migrations
             modelBuilder.Entity("ErisHub.Database.Models.PollTextReply", b =>
                 {
                     b.HasOne("ErisHub.Database.Models.Player", "Player")
-                        .WithMany("PollTextReply")
+                        .WithMany("PollTextReplies")
                         .HasForeignKey("PlayerId")
                         .HasConstraintName("fk_rails_ffc8df499f");
 
                     b.HasOne("ErisHub.Database.Models.Poll", "Poll")
-                        .WithMany("PollTextReply")
+                        .WithMany("PollTextReplies")
                         .HasForeignKey("PollId")
                         .HasConstraintName("fk_rails_0833f4df0b");
                 });
@@ -413,17 +413,17 @@ namespace ErisHub.Migrations
             modelBuilder.Entity("ErisHub.Database.Models.PollVote", b =>
                 {
                     b.HasOne("ErisHub.Database.Models.PollOption", "Option")
-                        .WithMany("PollVote")
+                        .WithMany("PollVotes")
                         .HasForeignKey("OptionId")
                         .HasConstraintName("fk_rails_826ebfbbb3");
 
                     b.HasOne("ErisHub.Database.Models.Player", "Player")
-                        .WithMany("PollVote")
+                        .WithMany("PollVotes")
                         .HasForeignKey("PlayerId")
                         .HasConstraintName("fk_rails_a3e5a3aede");
 
                     b.HasOne("ErisHub.Database.Models.Poll", "Poll")
-                        .WithMany("PollVote")
+                        .WithMany("PollVotes")
                         .HasForeignKey("PollId")
                         .HasConstraintName("fk_rails_a6e6974b7e");
                 });

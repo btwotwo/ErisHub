@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
+using ErisHub.Database.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ErisHub.Database.Models;
+using Controller = ErisHub.Helpers.Controller;
 
 namespace ErisHub.Core.Bans
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BansController : ControllerBase
+    public class BansController : Controller
     {
         private readonly ErisContext _context;
         private readonly IMapper _mapper;
@@ -50,6 +48,21 @@ namespace ErisHub.Core.Bans
             }
 
             return Ok(ToDto(ban));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] BanDto editBan)
+        {
+            var ban = await _context.Bans.SingleOrDefaultAsync(x => x.Id == id);
+
+            if (ban == null)
+            {
+                return NotFound();
+            }
+
+            ban.Duration = editBan.Duration;
+
+            return Ok();
         }
 
         private BanDto ToDto(Ban ban)

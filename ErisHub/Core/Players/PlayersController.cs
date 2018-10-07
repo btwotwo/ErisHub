@@ -5,12 +5,13 @@ using AutoMapper;
 using ErisHub.Database.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Controller = ErisHub.Helpers.Controller;
 
 namespace ErisHub.Core.Players
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PlayersController : ControllerBase
+    public class PlayersController : Controller
     {
         private readonly ErisContext _db;
         private readonly IMapper _mapper;
@@ -21,17 +22,19 @@ namespace ErisHub.Core.Players
             _mapper = mapper;
         }
 
-        // GET: api/players
         [HttpGet]
-        public IActionResult GetPlayers()
+        public IActionResult GetAll([FromQuery] string name)
         {
             var players = _db.Players.Select(player => _mapper.Map<PlayerDto>(player));
+            if (name != null)
+            {
+                players = players.Where(x => x.Ckey == name);
+            }
             return Ok(players);
         }
 
-        // GET: api/players/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPlayers([FromRoute] int id)
+        public async Task<IActionResult> GetOne(int id)
         {
             if (!ModelState.IsValid)
             {

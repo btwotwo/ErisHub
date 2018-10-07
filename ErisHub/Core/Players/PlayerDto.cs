@@ -16,5 +16,8 @@ namespace ErisHub.Core.Players
 
         public int Flags { get; set; }
         public string Rank { get; set; }
+
+        public string Ip { get; set; }
+        public string Cid { get; set; }
     }
 }

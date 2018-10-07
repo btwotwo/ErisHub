@@ -301,4 +301,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-**/appsettings.Development.json
+/appsettings.Development.json
+/serverconfig.Development.json

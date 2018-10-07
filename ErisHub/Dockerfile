@@ -17,4 +17,4 @@ RUN dotnet publish "ErisHub.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "ErisHub.dll"]
+ENTRYPOINT ["dotnet", "ErisHub.dll", "--environment=Production"]

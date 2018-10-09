@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ErisHub.Core.Server.Models;
 using ErisHub.Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Caching.Memory;
 using Controller = ErisHub.Helpers.Controller;
 
 namespace ErisHub.Core.Server
@@ -17,87 +17,155 @@ namespace ErisHub.Core.Server
     public class ServerController : Controller
     {
         private readonly ServerStore _servers;
+        private readonly IMemoryCache _cache;
+        private const string StatusCommand = "status";
 
-        public ServerController(ServerStore servers)
+        public ServerController(ServerStore servers, IMemoryCache cache)
         {
             _servers = servers;
+            _cache = cache;
+        }
+
+        [HttpGet]
+        public IActionResult GetServers()
+        {
+            return Ok(_servers.GetAllServers());
+        }
+
+        [HttpGet("{serverName}/status")]
+        public async Task<IActionResult> GetServerStatusAsync(string serverName)
+        {
+            try
+            {
+                var server = TryGetServer(serverName);
+
+                if (_cache.TryGetValue(server.Name, out StatusModel model))
+                {
+                    return Ok(model);
+                }
+
+                model = new StatusModel()
+                {
+                    Name = serverName,
+                    Address = $"byond://{server.Host}:{server.Port}"
+                };
+                var response = await ByondTopic.SendTopicCommandAsync(server.Host, server.Port.ToString(), StatusCommand);
+
+                if (response == null)
+                {
+                    model.Online = false;
+                }
+                else
+                {
+                    var parsedResponse = QueryHelpers.ParseQuery(response);
+                    model.Players = int.Parse(parsedResponse["players"]);
+                    model.Admins = int.Parse(parsedResponse["admins"]);
+                    model.Online = true;
+                }
+
+                _cache.Set(server.Name, model, TimeSpan.FromSeconds(5));
+
+                return Ok(model);
+
+
+            }
+            catch (ServerNameInvalidException e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet("{serverName}/config")]
-        public IActionResult GetConfigs(string serverName)
+        public IActionResult GetConfigNames(string serverName)
         {
-            var server = _servers.GetServer(serverName);
-
-            if (server == null)
+            try
             {
-                return BadRequest($"{serverName} not found");
+                var server = TryGetServer(serverName);
+                var configs = GetConfigFileNames(server.ConfigPath).Where(x => x != ".gitignore");
+
+                return Ok(configs);
+            }
+            catch (ServerNameInvalidException e)
+            {
+                return BadRequest(e.Message);
             }
 
-            var configPath = Path.Combine(server.Path, server.ConfigDir);
-            var configs = GetConfigFileNames(configPath).Where(x => x != ".gitignore");
 
-            return Ok(configs);
         }
 
         [HttpGet("{serverName}/config/{configName}")]
         public async Task<IActionResult> GetConfigAsync(string serverName, string configName)
         {
-            var server = _servers.GetServer(serverName);
-
-            if (server == null)
+            try
             {
-                return BadRequest($"{serverName} not found");
-            }
+                var server = TryGetServer(serverName);
 
-            var configPath = Path.Combine(server.Path, server.ConfigDir);
-            var configFileName = GetConfigFileNames(configPath).SingleOrDefault(x => x == configName);
+                var configFileName = GetConfigFileNames(server.ConfigPath).SingleOrDefault(x => x == configName);
 
-            if (configFileName == null)
-            {
-                return BadRequest($"{configName} not found.");
-            }
-
-            using (var configFile = System.IO.File.OpenText(Path.Combine(configPath, configFileName)))
-            {
-                var configFileText = await configFile.ReadToEndAsync();
-
-                var result = new ServerConfig()
+                if (configFileName == null)
                 {
-                    Contents = configFileText,
-                    Filename = configFileName
-                };
+                    return BadRequest($"{configName} not found.");
+                }
 
-                return Ok(result);
+                using (var configFile = System.IO.File.OpenText(Path.Combine(server.ConfigPath, configFileName)))
+                {
+                    var configFileText = await configFile.ReadToEndAsync();
+                    return Ok(configFileText);
+                }
+            }
+            catch (ServerNameInvalidException e)
+            {
+                return BadRequest(e.Message);
             }
         }
 
         [HttpPost("{serverName}/config/{configName}")]
         public async Task<IActionResult> UpdateConfigAsync(string serverName, string configName,
-            [FromBody] ServerConfig updated)
+            [FromBody] string newContents)
         {
-            var server = _servers.GetServer(serverName);
-
-            if (server == null)
+            try
             {
-                return BadRequest($"{serverName} not found.");
+                var server = TryGetServer(serverName);
+
+                var configFileName = GetConfigFileNames(server.ConfigPath).SingleOrDefault(x => x == configName);
+
+                if (configFileName == null)
+                {
+                    return BadRequest($"{configName} not found.");
+                }
+
+                await System.IO.File.WriteAllTextAsync(Path.Combine(server.ConfigPath, configFileName), newContents);
+
+                return Ok();
             }
-
-            var configPath = Path.Combine(server.Path, server.ConfigDir);
-            var configFileName = GetConfigFileNames(configPath).SingleOrDefault(x => x == configName);
-
-            if (configFileName == null)
+            catch (ServerNameInvalidException e)
             {
-                return BadRequest($"{configName} not found.");
+                return BadRequest(e.Message);
             }
-
-            await System.IO.File.WriteAllTextAsync(Path.Combine(configPath, configFileName), updated.Contents);
-
-            return Ok();
         }
 
         private static IEnumerable<string> GetConfigFileNames(string configPath)
         {
             return Directory.EnumerateFiles(configPath).Select(Path.GetFileName);
+        }
+
+        private Configuration.Server TryGetServer(string serverName)
+        {
+            var server = _servers.GetServer(serverName);
+
+            if (server == null)
+            {
+                throw new ServerNameInvalidException(serverName);
+            }
+
+            return server;
+        }
+
+        private class ServerNameInvalidException : Exception
+        {
+            public ServerNameInvalidException(string serverName) : base($"{serverName} not found")
+            {
+            }
         }
     }
 }

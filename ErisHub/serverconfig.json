@@ -2,7 +2,9 @@
   "Servers": [
     {
       "Name": "Server name",
-      "Path": "path/to/build"  
+      "ConfigPath": "path/to/config",
+      "Host": "host.com",
+      "Port": 1234
     }
   ]  
 }

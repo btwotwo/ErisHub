@@ -39,6 +39,7 @@ namespace ErisHub
             var mapperConfig = new MapperConfiguration(config => config.AddProfile<MapperProfile>());
             var mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddMemoryCache();
             services.AddSingleton<ServerStore>();
             services.AddSingleton(Configuration);
         }

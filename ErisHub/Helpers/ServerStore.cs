@@ -21,5 +21,10 @@ namespace ErisHub.Helpers
         {
             return _servers.SingleOrDefault(x => x.Name == name);
         }
+
+        public IEnumerable<string> GetAllServers()
+        {
+            return _servers.Select(x => x.Name);
+        }
     }
 }

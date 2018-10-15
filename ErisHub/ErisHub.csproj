@@ -24,4 +24,14 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.2" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Design" Version="1.1.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ErisHub.Shared\ErisHub.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="serverconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

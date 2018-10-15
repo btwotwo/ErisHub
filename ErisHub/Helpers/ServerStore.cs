@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ErisHub.Configuration;
+using ErisHub.Shared.Server.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace ErisHub.Helpers
@@ -17,14 +18,14 @@ namespace ErisHub.Helpers
             config.GetSection("Servers").Bind(_servers);
         }
 
-        public Server GetServer(string name)
+        public Server GetServer(string id)
         {
-            return _servers.SingleOrDefault(x => x.Name == name);
+            return _servers.SingleOrDefault(x => x.Id == id);
         }
 
-        public IEnumerable<string> GetAllServers()
+        public IEnumerable<Server> GetAllServers()
         {
-            return _servers.Select(x => x.Name);
+            return _servers;
         }
     }
 }

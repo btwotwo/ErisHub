@@ -1,0 +1,12 @@
+{
+  "Token":  "bot token",
+  "Servers": [
+    {
+      "Host": "somehost.com",
+      "Port": "1234",
+      "Name": "Server Name"
+    }
+  ],
+  "HubApiUrl": "hub.com:1234",
+  "StatusChannelId": 1231231231 
+}

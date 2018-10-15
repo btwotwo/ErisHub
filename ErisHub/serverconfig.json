@@ -1,6 +1,7 @@
 {
   "Servers": [
     {
+      "Id": "server id ('en', 'ru')" ,
       "Name": "Server name",
       "ConfigPath": "path/to/config",
       "Host": "host.com",

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using ErisHub.DiscordBot.Helpers;
 using ErisHub.DiscordBot.Services;
 using ErisHub.DiscordBot.Services.Status;
 using Microsoft.Extensions.Configuration;
@@ -31,11 +30,12 @@ namespace ErisHub.DiscordBot
 
             var services = ConfigureServices();
 
+            services.GetRequiredService<LoggingService>().Init();
+
             await _client.LoginAsync(TokenType.Bot, _config["Token"]);
             await _client.StartAsync();
 
-            await services.GetRequiredService<ServerStore>().InitAsync();
-            await services.GetRequiredService<StatusService>().InitAsync();
+            await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
 
             await Task.Delay(-1);
         }
@@ -50,11 +50,11 @@ namespace ErisHub.DiscordBot
                 // Base
                 .AddSingleton(_client)
                 .AddSingleton<CommandService>()
+                .AddSingleton<CommandHandlingService>()
                 // Logging
                 .AddLogging()
                 .AddSingleton<LoggingService>()
                 .AddSingleton(apiHttpClient)
-                .AddSingleton<ServerStore>()
                 .AddSingleton<StatusService>()
                 //Extra
                 .AddSingleton(_config)

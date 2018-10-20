@@ -14,16 +14,20 @@ namespace ErisHub.DiscordBot.Services
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
 
-        private readonly ILoggerFactory _loggerFactory;
-        private readonly ILogger _discordLogger;
-        private readonly ILogger _commandsLogger;
+        private ILoggerFactory _loggerFactory;
+        private ILogger _discordLogger;
+        private ILogger _commandsLogger;
 
         public LoggingService(DiscordSocketClient discord, CommandService commands, ILoggerFactory loggerFactory)
         {
             _discord = discord;
             _commands = commands;
+            _loggerFactory = loggerFactory;
+        }
 
-            _loggerFactory = ConfigureLogging(loggerFactory);
+        public void Init()
+        {
+            _loggerFactory = ConfigureLogging(_loggerFactory);
             _discordLogger = _loggerFactory.CreateLogger("Discord");
             _commandsLogger = _loggerFactory.CreateLogger("Commands");
 

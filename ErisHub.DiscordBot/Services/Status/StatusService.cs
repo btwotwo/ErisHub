@@ -2,61 +2,177 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using ErisHub.DiscordBot.Helpers;
+using ErisHub.Shared.Server.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ErisHub.DiscordBot.Services.Status
 {
     public class StatusService
     {
         private Timer _statusUpdateTimer;
-        private readonly ServerStore _servers;
         private IUserMessage _statusMessage;
+        private IEnumerable<StatusModel> _statuses;
+        private readonly HashSet<string> _hidden;
+
         private readonly DiscordSocketClient _discord;
+        private readonly ILogger _logger;
+        private readonly HttpClient _http;
         private readonly IConfiguration _config;
 
 
-        public StatusService(ServerStore store, DiscordSocketClient discord, IConfiguration config)
+        public StatusService(HttpClient http, DiscordSocketClient discord, IConfiguration config,
+            ILoggerFactory loggerFactory)
         {
-            _servers = store;
+            _http = http;
             _config = config;
             _discord = discord;
+            _logger = loggerFactory.CreateLogger("Status updater");
+            _hidden = new HashSet<string>();
         }
 
-        public async Task InitAsync()
+        public async Task StartAsync()
         {
-            var initialEmbedBuilder = new EmbedBuilder();
-            initialEmbedBuilder.WithColor(Color.Green);
-
-            foreach (var server in _servers.Servers)
+            if (_statusMessage == null)
             {
-                if (server.Online)
+                await UpdateStatuses();
+
+                var channel = (IMessageChannel)_discord.GetChannel(_config.GetValue<ulong>("StatusChannelId"));
+                _statusMessage = await channel.SendMessageAsync("", false, GenerateEmbed());
+            }
+
+            if (_statusUpdateTimer != null)
+            {
+                throw new StatusException("Already started");
+            }
+
+            _statusUpdateTimer = new Timer(UpdateAsync, null, 0, Timeout.Infinite);
+        }
+
+        public async Task StopAsync()
+        {
+            if (_statusUpdateTimer == null)
+            {
+                throw new StatusException("Already stopped.");
+            }
+
+            _statusUpdateTimer.Dispose();
+            _statusUpdateTimer = null;
+            await _statusMessage.DeleteAsync();
+            _statusMessage = null;
+        }
+
+        public void Hide(string serverName)
+        {
+            if (_hidden.Contains(serverName))
+            {
+                throw new StatusException("Already hidden.");
+            }
+
+            if (_statuses.Any(x => x.Name == serverName) )
+            {
+                _hidden.Add(serverName);
+            }
+            else
+            {
+                throw new StatusException("Not valid name.");
+            }
+        }
+
+        public void Unhide(string serverName)
+        {
+            if (_statuses.Any(x => x.Name == serverName))
+            {
+                if (_hidden.Contains(serverName))
                 {
-                    initialEmbedBuilder.AddField(server.Name, $"<{server.Address}>");
-                    initialEmbedBuilder.AddInlineField("Players", server.Players);
-                    initialEmbedBuilder.AddInlineField("Admins", server.Admins);
+                    _hidden.Remove(serverName);
                 }
                 else
                 {
-                    initialEmbedBuilder.AddField(server.Name, "Server is offline");
+                    throw new StatusException("Not hidden.");
+                }
+            }
+            else
+            {
+                throw new StatusException("Not valid name.");
+            }
+        }
+
+        private async void UpdateAsync(object state)
+        {
+            try
+            {
+                await UpdateStatuses();
+                await _statusMessage.ModifyAsync(x => x.Embed = GenerateEmbed());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(default(EventId), e, "Error while updating message");
+            }
+            finally
+            {
+                _statusUpdateTimer?.Change(10000, Timeout.Infinite);
+            }
+        }
+
+
+        private Embed GenerateEmbed()
+        {
+            var builder = new EmbedBuilder();
+            builder.WithColor(Color.Green);
+
+            foreach (var status in _statuses)
+            {
+                if (_hidden.Contains(status.Name))
+                {
+                    continue;
                 }
 
-                initialEmbedBuilder.AddField("\u200b", "\u200b"); // to emulate a new line
+                if (status.Online)
+                {
+                    builder.AddField(status.Name, $"<{status.Address}>");
+                    builder.AddInlineField("Players", status.Players);
+                    builder.AddInlineField("Admins", status.Admins);
+                }
+                else
+                {
+                    builder.AddField(status.Name, "Server is offline");
+                }
+
+                builder.AddField("\u200b", "\u200b"); // to emulate a new line
             }
 
-            var channel = (IMessageChannel)_discord.GetChannel(_config.GetValue<ulong>("StatusChannelId"));
-            var message = await channel.SendMessageAsync("", false, initialEmbedBuilder.Build());
-            _statusMessage = message;
-
+            return builder.Build();
         }
 
-        private async void UpdateStatusesAsync(object state)
+        private async Task UpdateStatuses()
         {
+            try
+            {
+                var response = await _http.GetAsync("api/servers");
+                response.EnsureSuccessStatusCode();
+
+                var statuses =
+                    JsonConvert.DeserializeObject<IEnumerable<StatusModel>>(await response.Content.ReadAsStringAsync());
+
+                _statuses = statuses.OrderBy(x => x.Name);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(default(EventId), e, "Failed to retrieve server list.");
+            }
         }
+    }
+
+    public class StatusException : Exception
+    {
+        public StatusException(string msg) : base(msg) { }
     }
 }

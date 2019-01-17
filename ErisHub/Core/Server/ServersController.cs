@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ErisHub.Helpers;
+using ErisHub.Shared;
 using ErisHub.Shared.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -127,7 +128,7 @@ namespace ErisHub.Core.Server
                 Address = $"byond://{server.Host}:{server.Port}"
             };
             var response =
-                await ByondTopic.ByondTopic.SendTopicCommandAsync(server.Host, server.Port.ToString(), StatusCommand);
+                await ByondTopic.SendTopicCommandAsync(server.Host, server.Port.ToString(), StatusCommand);
 
             if (response == null)
             {

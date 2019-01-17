@@ -10,7 +10,7 @@ namespace ErisHub.DiscordBot.Preconditions
 {
     public class RequireRoleAttribute : PreconditionAttribute
     {
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+        public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             var config = services.GetService<IConfiguration>();
 
@@ -23,5 +23,6 @@ namespace ErisHub.DiscordBot.Preconditions
                 ? Task.FromResult(PreconditionResult.FromSuccess())
                 : Task.FromResult(PreconditionResult.FromError("You do not have permissions to do that."));
         }
+
     }
 }

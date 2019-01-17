@@ -12,10 +12,10 @@ namespace ErisHub.DiscordBot.Services
     {
         private readonly CommandService _commands;
         private readonly IConfiguration _config;
-        private readonly DiscordSocketClient _discord;
+        private readonly BaseSocketClient _discord;
         private IServiceProvider _provider;
 
-        public CommandHandlingService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands, IConfiguration config)
+        public CommandHandlingService(IServiceProvider provider, BaseSocketClient discord, CommandService commands, IConfiguration config)
         {
             _commands = commands;
             _config = config;
@@ -26,7 +26,7 @@ namespace ErisHub.DiscordBot.Services
         public async Task InitializeAsync(IServiceProvider provider)
         {
             _provider = provider;
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), provider);
 
             _discord.MessageReceived += MessageReceived;
         }
@@ -40,7 +40,7 @@ namespace ErisHub.DiscordBot.Services
 
             if (!(message.HasMentionPrefix(_discord.CurrentUser, ref argPos))) return;
 
-            var context = new SocketCommandContext(_discord, message);
+            var context = new SocketCommandContext((DiscordSocketClient)_discord, message);
             var result = await _commands.ExecuteAsync(context, argPos, _provider);
 
             if (result.Error.HasValue && result.Error.Value != CommandError.UnknownCommand)

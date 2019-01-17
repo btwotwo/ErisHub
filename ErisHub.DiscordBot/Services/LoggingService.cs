@@ -11,14 +11,14 @@ namespace ErisHub.DiscordBot.Services
     // taken from patek bot
     public class LoggingService
     {
-        private readonly DiscordSocketClient _discord;
+        private readonly BaseSocketClient _discord;
         private readonly CommandService _commands;
 
         private ILoggerFactory _loggerFactory;
         private ILogger _discordLogger;
         private ILogger _commandsLogger;
 
-        public LoggingService(DiscordSocketClient discord, CommandService commands, ILoggerFactory loggerFactory)
+        public LoggingService(BaseSocketClient discord, CommandService commands, ILoggerFactory loggerFactory)
         {
             _discord = discord;
             _commands = commands;
@@ -27,7 +27,6 @@ namespace ErisHub.DiscordBot.Services
 
         public void Init()
         {
-            _loggerFactory = ConfigureLogging(_loggerFactory);
             _discordLogger = _loggerFactory.CreateLogger("Discord");
             _commandsLogger = _loggerFactory.CreateLogger("Commands");
 
@@ -62,12 +61,6 @@ namespace ErisHub.DiscordBot.Services
                 message.Exception,
                 delegate { return message.ToString(prependTimestamp: false); });
             return Task.CompletedTask;
-        }
-
-        private static ILoggerFactory ConfigureLogging(ILoggerFactory factory)
-        {
-            factory.AddConsole();
-            return factory;
         }
 
         private static LogLevel LogLevelFromSeverity(LogSeverity severity)

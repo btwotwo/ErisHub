@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -13,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace ErisHub.DiscordBot.Services.Status
+namespace ErisHub.DiscordBot.Modules.Server
 {
     public class StatusService
     {
@@ -22,13 +20,13 @@ namespace ErisHub.DiscordBot.Services.Status
         private IEnumerable<StatusModel> _statuses;
         private readonly HashSet<string> _hidden;
 
-        private readonly DiscordSocketClient _discord;
+        private readonly BaseSocketClient _discord;
         private readonly ILogger _logger;
         private readonly HttpClient _http;
         private readonly IConfiguration _config;
 
 
-        public StatusService(HttpClient http, DiscordSocketClient discord, IConfiguration config,
+        public StatusService(HttpClient http, BaseSocketClient discord, IConfiguration config,
             ILoggerFactory loggerFactory)
         {
             _http = http;
@@ -138,8 +136,8 @@ namespace ErisHub.DiscordBot.Services.Status
                 if (status.Online)
                 {
                     builder.AddField(status.Name, $"<{status.Address}>");
-                    builder.AddInlineField("Players", status.Players);
-                    builder.AddInlineField("Admins", status.Admins);
+                    builder.AddField("Players", status.Players, inline: true);
+                    builder.AddField("Admins", status.Admins, inline: true);
                 }
                 else
                 {

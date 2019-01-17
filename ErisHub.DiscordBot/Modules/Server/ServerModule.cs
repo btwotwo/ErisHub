@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord.Commands;
-using ErisHub.DiscordBot.Services.Status;
 
-namespace ErisHub.DiscordBot.Modules
+namespace ErisHub.DiscordBot.Modules.Server
 {
     [Group("status")]
     public class StatusModule : ModuleBase

@@ -1,5 +1,5 @@
 {
-  "Token":  "bot token",
+  "Token": "bot token",
   "Servers": [
     {
       "Host": "somehost.com",
@@ -8,5 +8,12 @@
     }
   ],
   "HubApiUrl": "hub.com:1234",
-  "StatusChannelId": 1231231231 
+  "StatusChannelId": 1231231231,
+  "BotSettings": {
+    "BotStatusChannelId": 1231231,
+    "MentionRoleId": 1231231
+  },
+  "ConnectionStrings": {
+    "Bot": "Data Source=bot.db"
+  }
 }

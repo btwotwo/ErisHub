@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ByondTopic
+namespace ErisHub.Shared
 {
     public static class ByondTopic
     {

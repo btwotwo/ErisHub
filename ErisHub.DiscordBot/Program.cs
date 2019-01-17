@@ -52,6 +52,11 @@ namespace ErisHub.DiscordBot
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
             services.GetRequiredService<NewcomerHandler>().Init();
 
+            using (var context = services.GetService<BotContext>())
+            {
+                await context.Database.MigrateAsync();
+            }
+
             await Task.Delay(-1);
 
         }

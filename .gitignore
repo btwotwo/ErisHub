@@ -304,4 +304,4 @@ testem.log
 .DS_Store
 Thumbs.db
 config.dev.json
-bot.db
+ErisHub.DiscordBot/bot.db

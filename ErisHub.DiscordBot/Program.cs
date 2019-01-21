@@ -44,6 +44,8 @@ namespace ErisHub.DiscordBot
 
             var services = ConfigureServices();
 
+            await services.GetService<BotContext>().Database.MigrateAsync();
+
             services.GetRequiredService<LoggingService>().Init();
 
             await _client.LoginAsync(TokenType.Bot, _configObject.Token);
@@ -52,10 +54,6 @@ namespace ErisHub.DiscordBot
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
             services.GetRequiredService<NewcomerHandler>().Init();
 
-            using (var context = services.GetService<BotContext>())
-            {
-                await context.Database.MigrateAsync();
-            }
 
             await Task.Delay(-1);
 
@@ -76,6 +74,7 @@ namespace ErisHub.DiscordBot
             {
                 BaseAddress = new Uri(_configObject.HubApiUrl)
             };
+
             return new ServiceCollection()
                 // Base
                 .AddSingleton(_configObject)

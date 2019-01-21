@@ -15,7 +15,7 @@ namespace ErisHub.DiscordBot.Util.CachedRepo
         public CachedRepo(BotContext db)
         {
             _db = db;
-            UpdateCache().Wait();
+            Cache = _db.Set<T>().ToList();
         }
 
         public async Task AddAsync(T item)
@@ -23,7 +23,7 @@ namespace ErisHub.DiscordBot.Util.CachedRepo
             await _db.AddAsync(item);
             await _db.SaveChangesAsync();
 
-            await UpdateCache();
+            await UpdateCacheAsync();
         }
 
 
@@ -32,7 +32,7 @@ namespace ErisHub.DiscordBot.Util.CachedRepo
             _db.Update(item);
             await _db.SaveChangesAsync();
 
-            await UpdateCache();
+            await UpdateCacheAsync();
         }
 
         public async Task DeleteAsync(T item)
@@ -40,10 +40,10 @@ namespace ErisHub.DiscordBot.Util.CachedRepo
             _db.Remove(item);
             await _db.SaveChangesAsync();
 
-            await UpdateCache();
+            await UpdateCacheAsync();
         }
 
-        private async Task UpdateCache()
+        private async Task UpdateCacheAsync()
         {
             Cache = await _db.Set<T>().ToListAsync();
         }

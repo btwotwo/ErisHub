@@ -138,6 +138,7 @@ namespace ErisHub.DiscordBot.Modules.Server
                     builder.AddField(status.Name, $"<{status.Address}>");
                     builder.AddField("Players", status.Players, inline: true);
                     builder.AddField("Admins", status.Admins, inline: true);
+                    builder.AddField("Round duration", status.RoundDuration);
                 }
                 else
                 {
@@ -146,7 +147,7 @@ namespace ErisHub.DiscordBot.Modules.Server
 
                 builder.AddField("\u200b", "\u200b"); // to emulate a new line
             }
-
+            builder.Fields.RemoveAt(builder.Fields.Count - 1); //to remove new line from the last line
             return builder.Build();
         }
 

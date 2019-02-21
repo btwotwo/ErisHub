@@ -139,6 +139,7 @@ namespace ErisHub.Core.Server
                 var parsedResponse = QueryHelpers.ParseQuery(response);
                 model.Players = int.Parse(parsedResponse["players"]);
                 model.Admins = int.Parse(parsedResponse["admins"]);
+                model.RoundDuration = parsedResponse["roundduration"];
                 model.Online = true;
             }
 

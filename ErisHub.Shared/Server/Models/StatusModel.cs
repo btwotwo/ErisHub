@@ -9,6 +9,7 @@ namespace ErisHub.Shared.Server.Models
         public int Admins { get; set; }
         public string Address { get; set; }
         public string Name { get; set; }
+        public string RoundDuration { get; set; }
 
         public override bool Equals(object obj)
         {

@@ -130,7 +130,7 @@ namespace ErisHub.Core.Server
             var response =
                 await ByondTopic.SendTopicCommandAsync(server.Host, server.Port.ToString(), StatusCommand);
 
-            if (response == null)
+            if (response == null || string.IsNullOrWhiteSpace(response))
             {
                 model.Online = false;
             }

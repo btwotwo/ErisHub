@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErisHub", "ErisHub\ErisHub.csproj", "{67F089BF-320A-4986-B2AB-4B8789BF1225}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErisHub.DiscordBot", "ErisHub.DiscordBOt\ErisHub.DiscordBot.csproj", "{1DFE934D-5F5A-455E-BE1C-8DB405B259BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ErisHub.DiscordBot", "ErisHub.DiscordBot\ErisHub.DiscordBot.csproj", "{1DFE934D-5F5A-455E-BE1C-8DB405B259BF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{67F089BF-320A-4986-B2AB-4B8789BF1225} = {67F089BF-320A-4986-B2AB-4B8789BF1225}
 	EndProjectSection

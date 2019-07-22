@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ErisHub.Configuration;
-using ErisHub.Shared.Server.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace ErisHub.Helpers

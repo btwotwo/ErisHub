@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using ErisHub.DiscordBot.Util;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace ErisHub.DiscordBot.Database.Models
+namespace ErisHub.DiscordBot.Database.Models.Newcomer
 {
-    public class NewcomerSetting
+    public class NewcomerSetting: IDbModel
     {
         [Key]
         public int Id { get; set; }

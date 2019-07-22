@@ -1,40 +1,41 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ErisHub.Database.Models;
+using ErisHub.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Controller = ErisHub.Helpers.Controller;
 
 namespace ErisHub.Core.Bans
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BansController : Controller
+    public class BansApiController : ApiController
     {
         private readonly ErisContext _context;
         private readonly IMapper _mapper;
 
-        public BansController(ErisContext context, IMapper mapper)
+        public BansApiController(ErisContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<ActionResult<List<BanDto>>> Get()
         {
             var bans = await _context.Bans
                 .Include(x => x.BannedBy)
                 .Include(x => x.Target)
                 .Include(x => x.UnbannedBy).ToListAsync();
 
-            var result = bans.Select(ToDto);
-            return Ok(result);
+            var result = bans.Select(ToDto).ToList();
+            return result;
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<ActionResult<BanDto>> Get(int id)
         {
             var ban = await _context.Bans
                 .Include(x => x.BannedBy)
@@ -47,11 +48,11 @@ namespace ErisHub.Core.Bans
                 return NotFound();
             }
 
-            return Ok(ToDto(ban));
+            return ToDto(ban);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] BanDto editBan)
+        public async Task<ActionResult> Put(int id, [FromBody] BanDto editBan)
         {
             var ban = await _context.Bans.SingleOrDefaultAsync(x => x.Id == id);
 

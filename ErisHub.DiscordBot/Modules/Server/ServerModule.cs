@@ -7,8 +7,6 @@ namespace ErisHub.DiscordBot.Modules.Server
     public class StatusModule : ModuleBase
     {
         private readonly StatusService _status;
-        private const string StatusStart = "start";
-        private const string StatusStop = "stop";
 
         public StatusModule(StatusService status)
         {

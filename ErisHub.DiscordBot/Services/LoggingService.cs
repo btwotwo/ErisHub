@@ -14,7 +14,7 @@ namespace ErisHub.DiscordBot.Services
         private readonly BaseSocketClient _discord;
         private readonly CommandService _commands;
 
-        private ILoggerFactory _loggerFactory;
+        private readonly ILoggerFactory _loggerFactory;
         private ILogger _discordLogger;
         private ILogger _commandsLogger;
 

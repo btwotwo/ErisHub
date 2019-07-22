@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using ErisHub.DiscordBot.Database.Models;
+using ErisHub.DiscordBot.Database.Models.Newcomer;
 using ErisHub.DiscordBot.Util.CachedDbEntity;
 using ErisHub.DiscordBot.Util.CachedRepo;
 
@@ -89,7 +90,7 @@ namespace ErisHub.DiscordBot.Modules.Newcomer
 
                     var guild = user.Guild;
 
-                    var newcomerRole = guild.Roles.Single(x => x.Id == _config.CachedValue.NewcomerRoleId.Value);
+                    var newcomerRole = guild.Roles.Single(x => _config.CachedValue.NewcomerRoleId != null && x.Id == _config.CachedValue.NewcomerRoleId.Value);
                     var memberRole = guild.Roles.Single(x => x.Id == role.RoleId);
 
                     await user.AddRoleAsync(memberRole);

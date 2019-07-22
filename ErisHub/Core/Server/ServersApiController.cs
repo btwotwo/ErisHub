@@ -5,41 +5,39 @@ using System.Linq;
 using System.Threading.Tasks;
 using ErisHub.Helpers;
 using ErisHub.Shared;
-using ErisHub.Shared.Server.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Caching.Memory;
-using Controller = ErisHub.Helpers.Controller;
 
 namespace ErisHub.Core.Server
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ServersController : Controller
+    public class ServersApiController : ApiController
     {
         private readonly ServerStore _servers;
         private readonly IMemoryCache _cache;
         private const string StatusCommand = "status";
 
-        public ServersController(ServerStore servers, IMemoryCache cache)
+        public ServersApiController(ServerStore servers, IMemoryCache cache)
         {
             _servers = servers;
             _cache = cache;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetServers()
+        public async Task<ActionResult<StatusModel[]>> GetServers()
         {
             var servers = _servers.GetAllServers();
             var statusesTasks = servers.Select(GetServerStatusAsync);
 
             var statuses = await Task.WhenAll(statusesTasks);
 
-            return Ok(statuses);
+            return statuses;
         }
 
         [HttpGet("{id}/status")]
-        public async Task<IActionResult> GetSingleServerStatusAsync(string id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<StatusModel>> GetSingleServerStatusAsync(string id)
         {
             var server = _servers.GetServer(id);
 
@@ -48,12 +46,14 @@ namespace ErisHub.Core.Server
                 return NotFound();
             }
 
-            return Ok(await GetServerStatusAsync(server));
+            var status = await GetServerStatusAsync(server);
+            return status;
 
         }
 
         [HttpGet("{id}/config")]
-        public IActionResult GetConfigNames(string id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<string>> GetConfigNames(string id)
         {
             var server = _servers.GetServer(id);
 
@@ -64,11 +64,13 @@ namespace ErisHub.Core.Server
 
             var configs = GetConfigFileNames(server.ConfigPath).Where(x => x != ".gitignore");
 
-            return Ok(configs);
+            return configs.ToList();
         }
 
         [HttpGet("{id}/config/{configName}")]
-        public async Task<IActionResult> GetConfigAsync(string id, string configName)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<string>> GetConfigAsync(string id, string configName)
         {
             var server = _servers.GetServer(id);
 
@@ -87,13 +89,16 @@ namespace ErisHub.Core.Server
             using (var configFile = System.IO.File.OpenText(Path.Combine(server.ConfigPath, configFileName)))
             {
                 var configFileText = await configFile.ReadToEndAsync();
-                return Ok(configFileText);
+                return configFileText;
             }
 
         }
 
         [HttpPost("{id}/config/{configName}")]
-        public async Task<IActionResult> UpdateConfigAsync(string id, string configName,
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> UpdateConfigAsync(string id, string configName,
             [FromBody] string newContents)
         {
             var server = _servers.GetServer(id);

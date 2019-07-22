@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ErisHub.DiscordBot.Database;
+using ErisHub.DiscordBot.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ErisHub.DiscordBot.Util.CachedRepo
 {
 
-    public class CachedRepo<T> : ICachedRepo<T> where T : class
+    public class CachedRepo<T> : ICachedRepo<T> where T : class, IDbModel
     {
         private readonly BotContext _db;
         public IReadOnlyCollection<T> Cache { get; private set; }

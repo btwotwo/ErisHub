@@ -1,17 +1,19 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using ErisHub.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace ErisHub.Helpers
+namespace ErisHub.Core
 {
-    public class Controller : Microsoft.AspNetCore.Mvc.ControllerBase
+    [Route("api/[controller]")]
+    [ApiController]
+    public abstract class ApiController : ControllerBase
     {
         public string CurrentUserId => User?.Claims.First(x => x.Type == "id")?.Value;
 
-        public new BadRequestObjectResult BadRequest(ModelStateDictionary modelState)
+        protected new BadRequestObjectResult BadRequest(ModelStateDictionary modelState)
         {
             var errors = new Errors();
 

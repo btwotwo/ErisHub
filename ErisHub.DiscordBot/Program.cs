@@ -7,11 +7,13 @@ using Discord.Commands;
 using Discord.WebSocket;
 using ErisHub.DiscordBot.Database;
 using ErisHub.DiscordBot.Database.Models;
+using ErisHub.DiscordBot.Database.Models.Newcomer;
 using ErisHub.DiscordBot.Modules.Newcomer;
 using ErisHub.DiscordBot.Modules.Server;
 using ErisHub.DiscordBot.Services;
 using ErisHub.DiscordBot.Util.CachedDbEntity;
 using ErisHub.DiscordBot.Util.CachedRepo;
+using Generated.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +27,7 @@ namespace ErisHub.DiscordBot
         {
             new Program().MainAsync().GetAwaiter().GetResult();
         }
-        
+
 
         private DiscordSocketClient _client;
         private IConfiguration _config;
@@ -63,37 +65,31 @@ namespace ErisHub.DiscordBot
         {
             var channelId = _configObject.BotSettings.BotStatusChannelId;
 
-            var channel = (IMessageChannel) _client.GetChannel(channelId);
+            var channel = (IMessageChannel)_client.GetChannel(channelId);
 
             await channel.SendMessageAsync($"Bot has been restarted.");
         }
 
         private IServiceProvider ConfigureServices()
         {
-            var apiHttpClient = new HttpClient()
-            {
-                BaseAddress = new Uri(_configObject.HubApiUrl)
-            };
+
 
             return new ServiceCollection()
-                // Base
-                .AddSingleton(_configObject)
-                .AddSingleton<BaseSocketClient>(_client)
-                .AddDbContext<BotContext>(builder => builder.UseSqlite(_config.GetConnectionString("Bot")))
-                .AddSingleton<CommandService>()
-                .AddSingleton<CommandHandlingService>()
-                .AddSingleton<ICachedRepo<NewcomerSetting> ,CachedRepo<NewcomerSetting>>()
-                .AddSingleton<ICachedDbEntity<NewcomerConfig>, CachedDbEntity<NewcomerConfig>>()
-                // Logging
+                .AddBaseServices(_configObject, _client, _config.GetConnectionString("Bot"))
                 .AddLogging(builder => builder.AddConsole())
                 .AddSingleton<LoggingService>()
-                .AddSingleton(apiHttpClient)
                 .AddSingleton<StatusService>()
                 .AddSingleton<NewcomerHandler>()
-                //Extra
+
+                .AddSingleton<ICachedRepo<NewcomerSetting>, CachedRepo<NewcomerSetting>>()
+                .AddSingleton<ICachedDbEntity<NewcomerConfig>, CachedDbEntity<NewcomerConfig>>()
+
                 .AddSingleton(_config)
                 .BuildServiceProvider();
         }
+
+
+
 
         private static IConfiguration BuildConfig()
         {
@@ -105,6 +101,28 @@ namespace ErisHub.DiscordBot
                 .AddJsonFile("config.json")
 #endif
                 .Build();
+        }
+    }
+
+    internal static class ServiceProviderExtensions
+    {
+        public static ServiceCollection AddBaseServices(this ServiceCollection provider, Config config, DiscordSocketClient client, string connectionString)
+        {
+            var apiHttpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(config.HubApiUrl)
+            };
+
+            provider.AddSingleton(config)
+                .AddSingleton<BaseSocketClient>(client)
+                .AddDbContext<BotContext>(builder => builder.UseSqlite(connectionString))
+                .AddSingleton<CommandService>()
+                .AddSingleton<CommandHandlingService>()
+                .AddSingleton(apiHttpClient)
+                .AddSingleton<BansApiClient>()
+                .AddSingleton<PlayersApiClient>()
+                .AddSingleton<ServersApiClient>();
+            return provider;
         }
     }
 }

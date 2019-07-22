@@ -3,38 +3,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ErisHub.Database.Models;
+using ErisHub.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Controller = ErisHub.Helpers.Controller;
 
 namespace ErisHub.Core.Players
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PlayersController : Controller
+    public class PlayersApiController : ApiController
     {
         private readonly ErisContext _db;
         private readonly IMapper _mapper;
 
-        public PlayersController(ErisContext db, IMapper mapper)
+        public PlayersApiController(ErisContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public IActionResult GetAll([FromQuery] string name)
+        [HttpGet("{name}")]
+        public ActionResult<List<PlayerDto>> GetAll(string name)
         {
             var players = _db.Players.Select(player => _mapper.Map<PlayerDto>(player));
             if (name != null)
             {
                 players = players.Where(x => x.Ckey == name);
             }
-            return Ok(players);
+            return players.ToList();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOne(int id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<PlayerDto>> GetOne(int id)
         {
             if (!ModelState.IsValid)
             {
@@ -50,7 +53,7 @@ namespace ErisHub.Core.Players
             }
 
 
-            return Ok(_mapper.Map<PlayerDto>(player));
+            return _mapper.Map<PlayerDto>(player);
         }
     }
 }

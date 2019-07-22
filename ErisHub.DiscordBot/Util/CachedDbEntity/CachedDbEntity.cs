@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
 using ErisHub.DiscordBot.Database;
+using ErisHub.DiscordBot.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ErisHub.DiscordBot.Util.CachedDbEntity
 {
-    public class CachedDbEntity<T> : ICachedDbEntity<T> where T: class
+    public class CachedDbEntity<T> : ICachedDbEntity<T> where T: class, IDbModel
     {
         private readonly BotContext _db;
 

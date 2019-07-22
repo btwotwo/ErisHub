@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using ErisHub.Shared.Server.Models;
+using Generated.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -17,19 +17,19 @@ namespace ErisHub.DiscordBot.Modules.Server
     {
         private Timer _statusUpdateTimer;
         private IUserMessage _statusMessage;
-        private IEnumerable<StatusModel> _statuses;
+        private IEnumerable<Generated.Client.StatusModel> _statuses;
         private readonly HashSet<string> _hidden;
 
         private readonly BaseSocketClient _discord;
         private readonly ILogger _logger;
-        private readonly HttpClient _http;
         private readonly IConfiguration _config;
+        private readonly ServersApiClient _api;
 
 
-        public StatusService(HttpClient http, BaseSocketClient discord, IConfiguration config,
+        public StatusService(ServersApiClient api, BaseSocketClient discord, IConfiguration config,
             ILoggerFactory loggerFactory)
         {
-            _http = http;
+            _api = api;
             _config = config;
             _discord = discord;
             _logger = loggerFactory.CreateLogger("Status updater");
@@ -155,11 +155,7 @@ namespace ErisHub.DiscordBot.Modules.Server
         {
             try
             {
-                var response = await _http.GetAsync("api/servers");
-                response.EnsureSuccessStatusCode();
-
-                var statuses =
-                    JsonConvert.DeserializeObject<IEnumerable<StatusModel>>(await response.Content.ReadAsStringAsync());
+                var statuses = await _api.GetServersAsync();
 
                 _statuses = statuses.OrderBy(x => x.Name);
             }

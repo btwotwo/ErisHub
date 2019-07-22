@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ErisHub.Helpers
+namespace ErisHub.Core
 {
     public class Errors
     {

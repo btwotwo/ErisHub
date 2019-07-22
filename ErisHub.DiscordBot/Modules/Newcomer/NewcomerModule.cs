@@ -6,6 +6,7 @@ using Discord;
 using Discord.Commands;
 using ErisHub.DiscordBot.Database;
 using ErisHub.DiscordBot.Database.Models;
+using ErisHub.DiscordBot.Database.Models.Newcomer;
 using ErisHub.DiscordBot.Services;
 using ErisHub.DiscordBot.Util;
 using ErisHub.DiscordBot.Util.CachedDbEntity;
@@ -56,9 +57,11 @@ namespace ErisHub.DiscordBot.Modules.Newcomer
                 return;
             }
 
-            if (!(await Context.Guild.GetChannelAsync(channel.Id) is IMessageChannel guildChannel))
+            var guildChannel = await Context.Guild.GetMessageChannelOrDefaultAsync(channel);
+
+            if (guildChannel == null)
             {
-                await ReplyAsync("Please use only text channels from this server.");
+                await ReplyAsync("Invalid channel.");
                 return;
             }
 

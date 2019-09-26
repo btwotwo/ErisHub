@@ -3,8 +3,10 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using ErisHub.DiscordBot.ApiClient;
 using ErisHub.DiscordBot.Database;
 using ErisHub.DiscordBot.Database.Models;
 using ErisHub.DiscordBot.Database.Models.Newcomer;
@@ -13,10 +15,11 @@ using ErisHub.DiscordBot.Modules.Server;
 using ErisHub.DiscordBot.Services;
 using ErisHub.DiscordBot.Util.CachedDbEntity;
 using ErisHub.DiscordBot.Util.CachedRepo;
-using Generated.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace ErisHub.DiscordBot
@@ -72,19 +75,11 @@ namespace ErisHub.DiscordBot
 
         private IServiceProvider ConfigureServices()
         {
-
-
             return new ServiceCollection()
                 .AddBaseServices(_configObject, _client, _config.GetConnectionString("Bot"))
-                .AddLogging(builder => builder.AddConsole())
-                .AddSingleton<LoggingService>()
-                .AddSingleton<StatusService>()
-                .AddSingleton<NewcomerHandler>()
-
-                .AddSingleton<ICachedRepo<NewcomerSetting>, CachedRepo<NewcomerSetting>>()
-                .AddSingleton<ICachedDbEntity<NewcomerConfig>, CachedDbEntity<NewcomerConfig>>()
-
-                .AddSingleton(_config)
+                .AddApiClients()
+                .AddCachedRepos()
+                .AddInfrastructure(_config)
                 .BuildServiceProvider();
         }
 
@@ -93,13 +88,19 @@ namespace ErisHub.DiscordBot
 
         private static IConfiguration BuildConfig()
         {
+            var env = new HostingEnvironment()
+            {
+                ApplicationName = AppDomain.CurrentDomain.FriendlyName,
+                ContentRootFileProvider = new PhysicalFileProvider(AppDomain.CurrentDomain.BaseDirectory),
+                ContentRootPath = AppDomain.CurrentDomain.BaseDirectory,
+                EnvironmentName = Environment.GetEnvironmentVariable("BOT_ENV")
+            };
+
             return new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-#if DEBUG
-                .AddJsonFile("config.dev.json")
-#else
-                .AddJsonFile("config.json")
-#endif
+                .AddJsonFile("config.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"config.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables("BOT")
                 .Build();
         }
     }
@@ -118,11 +119,39 @@ namespace ErisHub.DiscordBot
                 .AddDbContext<BotContext>(builder => builder.UseSqlite(connectionString))
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandlingService>()
-                .AddSingleton(apiHttpClient)
+                .AddSingleton<InteractiveService>()
+                .AddSingleton(apiHttpClient);
+            return provider;
+        }
+
+        public static IServiceCollection AddApiClients(this IServiceCollection provider)
+        {
+            return provider
                 .AddSingleton<BansApiClient>()
                 .AddSingleton<PlayersApiClient>()
                 .AddSingleton<ServersApiClient>();
-            return provider;
+        }
+
+        public static IServiceCollection AddCachedRepos(this IServiceCollection provider)
+        {
+            return provider
+                .AddSingleton<ICachedRepo<NewcomerSetting>, CachedRepo<NewcomerSetting>>()
+                .AddSingleton<ICachedDbEntity<NewcomerConfig>, CachedDbEntity<NewcomerConfig>>();
+        }
+
+        public static IServiceCollection AddUserServices(this IServiceCollection provider)
+        {
+            return provider
+                .AddSingleton<StatusService>()
+                .AddSingleton<NewcomerHandler>();
+        }
+
+        public static IServiceCollection AddInfrastructure(this IServiceCollection provider, IConfiguration config)
+        {
+            return provider
+                .AddLogging(builder => builder.AddConsole())
+                .AddSingleton<LoggingService>()
+                .AddSingleton(config);
         }
     }
 }

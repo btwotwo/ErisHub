@@ -25,7 +25,27 @@ namespace ErisHub.Core.Server
         }
 
         [HttpGet]
-        public async Task<ActionResult<StatusModel[]>> GetServers()
+        public ActionResult<List<Configuration.Server>> GetAllServers()
+        {
+            return _servers.GetAllServers().ToList();
+        }
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("{id}")]
+        public ActionResult<Configuration.Server> GetServer(string id)
+        {
+            var server = _servers.GetServer(id);
+
+            if (server == null)
+            {
+                return NotFound();
+            }
+
+            return server;
+        }
+
+        [HttpGet("statuses")]
+        public async Task<ActionResult<StatusModel[]>> GetStatuses()
         {
             var servers = _servers.GetAllServers();
             var statusesTasks = servers.Select(GetServerStatusAsync);
@@ -34,6 +54,7 @@ namespace ErisHub.Core.Server
 
             return statuses;
         }
+
 
         [HttpGet("{id}/status")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

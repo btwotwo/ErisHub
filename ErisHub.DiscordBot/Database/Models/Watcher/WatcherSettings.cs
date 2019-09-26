@@ -15,5 +15,8 @@ namespace ErisHub.DiscordBot.Database.Models.Watcher
 
         [Required]
         public string Message { get; set; }
+
+        [Required]
+        public bool Watching { get; set; }
     }
 }

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using ErisHub.DiscordBot.Database.Models;
 using ErisHub.DiscordBot.Database.Models.Newcomer;
 using ErisHub.DiscordBot.Util.CachedDbEntity;
 using ErisHub.DiscordBot.Util.CachedRepo;
@@ -79,28 +77,28 @@ namespace ErisHub.DiscordBot.Modules.Newcomer
                 case Emoji _:
                     return;
                 case Emote emote:
-                {
-                    var role = _settingsRepo.Cache.SingleOrDefault(x =>
-                        x.EmoteId == emote.Id && x.ChannelId == channel.Id && x.MessageId == message.Id);
-
-                    if (role == null)
                     {
-                        return;
+                        var role = _settingsRepo.Cache.SingleOrDefault(x =>
+                            x.EmoteId == emote.Id && x.ChannelId == channel.Id && x.MessageId == message.Id);
+
+                        if (role == null)
+                        {
+                            return;
+                        }
+
+                        var guild = user.Guild;
+
+                        var newcomerRole = guild.Roles.Single(x => _config.CachedValue.NewcomerRoleId != null && x.Id == _config.CachedValue.NewcomerRoleId.Value);
+                        var memberRole = guild.Roles.Single(x => x.Id == role.RoleId);
+
+                        await user.AddRoleAsync(memberRole);
+                        await user.RemoveRoleAsync(newcomerRole);
+
+                        var msg = await message.GetOrDownloadAsync();
+                        await msg.RemoveReactionAsync(emote, user);
+
+                        break;
                     }
-
-                    var guild = user.Guild;
-
-                    var newcomerRole = guild.Roles.Single(x => _config.CachedValue.NewcomerRoleId != null && x.Id == _config.CachedValue.NewcomerRoleId.Value);
-                    var memberRole = guild.Roles.Single(x => x.Id == role.RoleId);
-
-                    await user.AddRoleAsync(memberRole);
-                    await user.RemoveRoleAsync(newcomerRole);
-
-                    var msg = await message.GetOrDownloadAsync();
-                    await msg.RemoveReactionAsync(emote, user);
-
-                    break;
-                }
             }
 
         }

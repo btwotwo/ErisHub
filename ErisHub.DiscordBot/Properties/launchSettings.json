@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ErisHub.DiscordBot": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "BOT_ENV": "Development"
+      }
+    }
+  }
+}

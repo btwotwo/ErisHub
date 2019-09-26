@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using ErisHub.DiscordBot.ApiClient;
 using ErisHub.DiscordBot.Database;
 using ErisHub.DiscordBot.Database.Models.Watcher;
 using ErisHub.DiscordBot.Util;
@@ -17,8 +20,8 @@ namespace ErisHub.DiscordBot.Modules.Watcher
         private readonly BaseSocketClient _discordClient;
         private readonly HubConnection _connection;
         private readonly BotContext _db;
-
-        public WatcherModule(BaseSocketClient discordClient, BotContext context)
+        private readonly ServersApiClient _api;
+        public WatcherModule(BaseSocketClient discordClient, BotContext context, ServersApiClient api)
         {
             _discordClient = discordClient;
             _connection = new HubConnectionBuilder()
@@ -26,30 +29,35 @@ namespace ErisHub.DiscordBot.Modules.Watcher
                 .Build();
 
             _db = context;
+            _api = api;
+            _connection.On<string>(WebhookEvents.ServerRestart, async (serverName) =>
+            {
+                await ReplyAsync($"Server {serverName} restarted!");
+            });
         }
 
+
+
+        [Command("servers")]
+        public async Task GetServers()
+        {
+            var servers = await GetServerNamesAsync();
+
+            await ReplyAsync($"Available servers: {string.Join("\n", servers)}.");
+        }
+        
         [Command("settings")]
         public async Task UpdateSettings(string serverName, IRole mentionRole, IChannel mentionChannel, string mentionMessage)
         {
-            serverName = serverName.ToLower();
 
-            var messageChannel = await Context.Guild.GetMessageChannelOrDefaultAsync(mentionChannel);
+            var (valid, messageChannel) = await ValidateSettings(serverName, mentionChannel, mentionMessage);
 
-            if (messageChannel == null)
+            if (!valid)
             {
-                await ReplyAsync("Invalid channel.");
                 return;
             }
-
-            if (string.IsNullOrWhiteSpace(mentionMessage))
-            {
-                await ReplyAsync("Please provide a mention message.");
-                return;
-            }
-
 
             var settings = await _db.WatcherSettings.SingleOrDefaultAsync(x => x.Server == serverName);
-
             if (settings == null)
             {
                 settings = new WatcherSettings()
@@ -60,10 +68,10 @@ namespace ErisHub.DiscordBot.Modules.Watcher
                 _db.WatcherSettings.Add(settings);
             }
 
-
             settings.ChannelId = messageChannel.Id;
             settings.Message = mentionMessage;
             settings.MentionRoleId = mentionRole.Id;
+            settings.Watching = true;
 
             await _db.SaveChangesAsync();
 
@@ -77,7 +85,7 @@ namespace ErisHub.DiscordBot.Modules.Watcher
 
             if (settings == null)
             {
-                await ReplyAsync($@"Settings for server ""{server}"" are not found.");
+                await ReplyAsync(@"Watcher settings for ""{server}"" are not found. Please create them first with `settings serverName, mentionRole, mentionChannel, mentionMessage`");
                 return;
             }
 
@@ -86,20 +94,75 @@ namespace ErisHub.DiscordBot.Modules.Watcher
                 await _connection.StartAsync();
             }
 
-            _connection.On<string>(WebhookEvents.ServerRestart, async (serverName) =>
-            {
-                await ReplyAsync($"Server {serverName} restarted!");
-            });
-
             await ReplyAsync("Started.");
         }
 
         [Command("stop")]
-        public async Task StopWatching()
+        public async Task StopWatching(string server)
         {
-            _connection.Remove(WebhookEvents.ServerRestart);
+            var serverValid = await ValidateServer(server);
 
-            await ReplyAsync("Stopped.");
+            if (!serverValid)
+            {
+                return;
+            }
+
+            var settings = await _db.WatcherSettings.SingleOrDefaultAsync(x => x.Server == server);
+
+            if (settings == null)
+            {
+                await ReplyAsync(@"Watcher settings for ""{server}"" are not found. Please create them first with `settings serverName, mentionRole, mentionChannel, mentionMessage`");
+                return;
+            }
+
+            settings.Watching = false;
+
+            await _db.SaveChangesAsync();
+
+            await ReplyAsync($@"Stopped watching for ""{server}""");
         }
+
+        private async Task<(bool, IMessageChannel)> ValidateSettings(string serverName, IChannel mentionChannel, string mentionMessage)
+        {
+            var serverValid = await ValidateServer(serverName);
+
+            if (!serverValid)
+            {
+                return (false, null);
+            }
+
+            var messageChannel = await Context.Guild.GetMessageChannelOrDefaultAsync(mentionChannel);
+
+            if (messageChannel == null)
+            {
+                await ReplyAsync("Invalid channel.");
+                return (false, null);
+            }
+
+            if (string.IsNullOrWhiteSpace(mentionMessage))
+            {
+                await ReplyAsync("Please provide a mention message.");
+                return (false, null);
+            }
+
+            return (true, messageChannel);
+        }
+
+        private async Task<bool> ValidateServer(string serverName)
+        {
+            var servers = await GetServerNamesAsync();
+
+            if (!servers.Contains(serverName))
+            {
+                await ReplyAsync($"Server name is not valid. Available servers: : {string.Join("\n", servers)}.");
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<List<string>> GetServerNamesAsync() => (await _api.GetAllServersAsync()).Select(x => x.Name).ToList();
+        
     }
 }

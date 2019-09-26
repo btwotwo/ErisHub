@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Generated.Client;
+using ErisHub.DiscordBot.ApiClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -17,7 +17,7 @@ namespace ErisHub.DiscordBot.Modules.Server
     {
         private Timer _statusUpdateTimer;
         private IUserMessage _statusMessage;
-        private IEnumerable<Generated.Client.StatusModel> _statuses;
+        private IEnumerable<StatusModel> _statuses;
         private readonly HashSet<string> _hidden;
 
         private readonly BaseSocketClient _discord;
@@ -155,7 +155,7 @@ namespace ErisHub.DiscordBot.Modules.Server
         {
             try
             {
-                var statuses = await _api.GetServersAsync();
+                var statuses = await _api.GetStatusesAsync();
 
                 _statuses = statuses.OrderBy(x => x.Name);
             }

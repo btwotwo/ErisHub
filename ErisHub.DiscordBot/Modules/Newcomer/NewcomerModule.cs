@@ -1,22 +1,18 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using ErisHub.DiscordBot.Database;
-using ErisHub.DiscordBot.Database.Models;
 using ErisHub.DiscordBot.Database.Models.Newcomer;
-using ErisHub.DiscordBot.Services;
 using ErisHub.DiscordBot.Util;
 using ErisHub.DiscordBot.Util.CachedDbEntity;
 using ErisHub.DiscordBot.Util.CachedRepo;
-using Microsoft.EntityFrameworkCore;
 
 namespace ErisHub.DiscordBot.Modules.Newcomer
 {
     [Group("newcomer")]
-    public class NewcomerModule: ModuleBase
+    public class NewcomerModule : ModuleBase
     {
         private readonly Regex _emoteRegex = new Regex("<a?:(.+):([0-9]+)>");
         private readonly ICachedRepo<NewcomerSetting> _settingsRepo;

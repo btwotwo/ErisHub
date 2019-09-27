@@ -16,7 +16,8 @@
 
   <ItemGroup>
     <Content Include="config.Development.json">
-      <CopyToOutputDirectory ContinueOnError="true">Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <ContinueOnError>true</ContinueOnError>
     </Content>
     <Content Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

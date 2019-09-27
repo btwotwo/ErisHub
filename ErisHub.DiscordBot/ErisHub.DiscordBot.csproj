@@ -26,6 +26,8 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.0.1" />
     <PackageReference Include="Discord.Net.Commands" Version="2.0.1" />
+    <PackageReference Include="Discord.Addons.Interactive" Version="1.0.1"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4"/>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.0" />
@@ -48,15 +50,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ErisHub.Shared\ErisHub.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Discord.Addons.Interactive">
-      <HintPath>C:\Users\Y1\.nuget\packages\discord.addons.interactive\1.0.1\lib\netstandard1.1\Discord.Addons.Interactive.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore">
-      <HintPath>C:\Users\Y1\.nuget\packages\microsoft.entityframeworkcore\2.1.4\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <Target Name="NSwag" BeforeTargets="PrepareForBuild" Condition="'$(GenerateCode)'=='True'">

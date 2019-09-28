@@ -15,9 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="config.Development.json">
+    <Content Include="config.Development.json" Condition="Exists('config.Development.json')">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ContinueOnError>true</ContinueOnError>
     </Content>
     <Content Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

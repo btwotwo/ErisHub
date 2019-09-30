@@ -14,7 +14,7 @@ namespace ErisHub.DiscordBot.Database
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("config.dev.json")
+                .AddJsonFile("config.Development.json")
                 .Build();
             var builder = new DbContextOptionsBuilder<BotContext>();
             var connectionString = configuration.GetConnectionString("Bot");

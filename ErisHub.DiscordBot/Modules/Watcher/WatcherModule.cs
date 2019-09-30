@@ -30,13 +30,44 @@ namespace ErisHub.DiscordBot.Modules.Watcher
 
             _db = context;
             _api = api;
+            _connection.StartAsync().Wait();
             _connection.On<string>(WebhookEvents.ServerRestart, async (serverName) =>
             {
-                await ReplyAsync($"Server {serverName} restarted!");
+                var server = await _db.WatcherSettings.SingleOrDefaultAsync(x => x.Server == serverName);
+
+                if (server == null)
+                {
+                    return;
+                }
+
+                if (server.Watching)
+                {
+                    var channel = _discordClient.GetChannel(server.ChannelId) as IMessageChannel;
+                    var guild = (channel as IGuildChannel).Guild;
+                    var role = guild.GetRole(server.MentionRoleId);
+
+                    await channel.SendMessageAsync($"{role.Mention} {server.Message}");
+                }
             });
         }
 
 
+        [Command("get-settings")]
+        public async Task GetSettings()
+        {
+            var settings = await _db.WatcherSettings.ToListAsync();
+
+            foreach (var setting in settings)
+            {
+                await ReplyAsync($@"Server: ``{setting.Server}``
+Mention Role: ``{Context.Guild.GetRole(setting.MentionRoleId).Name}``
+Mention Channel: ``{(await Context.Guild.GetChannelAsync(setting.ChannelId)).Name}``
+Message: ``{setting.Message}``
+");
+            }
+
+
+        }
 
         [Command("servers")]
         public async Task GetServers()
@@ -81,7 +112,7 @@ namespace ErisHub.DiscordBot.Modules.Watcher
         [Command("start")]
         public async Task StartWatching(string server)
         {
-            var settings = _db.WatcherSettings.SingleOrDefaultAsync(x => x.Server == server);
+            var settings = await _db.WatcherSettings.SingleOrDefaultAsync(x => x.Server == server);
 
             if (settings == null)
             {
@@ -89,12 +120,9 @@ namespace ErisHub.DiscordBot.Modules.Watcher
                 return;
             }
 
-            if (_connection.State == HubConnectionState.Disconnected)
-            {
-                await _connection.StartAsync();
-            }
-
-            await ReplyAsync("Started.");
+            settings.Watching = true;
+            await _db.SaveChangesAsync();
+            await ReplyAsync($"Started watching for ``{settings.Server}``");
         }
 
         [Command("stop")]

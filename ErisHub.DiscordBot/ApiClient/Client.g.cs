@@ -17,13 +17,11 @@ namespace ErisHub.DiscordBot.ApiClient
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.0.6.0 (NJsonSchema v10.0.23.0 (Newtonsoft.Json v11.0.0.0))")]
     public partial class WebhookClient 
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public WebhookClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public WebhookClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl; 
             _httpClient = httpClient; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() => 
             {
@@ -31,12 +29,6 @@ namespace ErisHub.DiscordBot.ApiClient
                 UpdateJsonSerializerSettings(settings);
                 return settings;
             });
-        }
-    
-        public string BaseUrl 
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
     
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -57,7 +49,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task RestartHookAsync(string serverName, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Webhook/{serverName}/restarted");
+            urlBuilder_.Append("api/Webhook/{serverName}/restarted");
             urlBuilder_.Replace("{serverName}", System.Uri.EscapeDataString(ConvertToString(serverName, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -204,13 +196,11 @@ namespace ErisHub.DiscordBot.ApiClient
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.0.6.0 (NJsonSchema v10.0.23.0 (Newtonsoft.Json v11.0.0.0))")]
     public partial class ServersApiClient 
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public ServersApiClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public ServersApiClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl; 
             _httpClient = httpClient; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() => 
             {
@@ -218,12 +208,6 @@ namespace ErisHub.DiscordBot.ApiClient
                 UpdateJsonSerializerSettings(settings);
                 return settings;
             });
-        }
-    
-        public string BaseUrl 
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
     
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -244,7 +228,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Server>> GetAllServersAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/ServersApi");
+            urlBuilder_.Append("api/ServersApi");
     
             var client_ = _httpClient;
             try
@@ -309,7 +293,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task GetServerAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/ServersApi/{id}");
+            urlBuilder_.Append("api/ServersApi/{id}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -372,7 +356,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<StatusModel>> GetStatusesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/ServersApi/statuses");
+            urlBuilder_.Append("api/ServersApi/statuses");
     
             var client_ = _httpClient;
             try
@@ -437,7 +421,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task GetSingleServerStatusAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/ServersApi/{id}/status");
+            urlBuilder_.Append("api/ServersApi/{id}/status");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -500,7 +484,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task GetConfigNamesAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/ServersApi/{id}/config");
+            urlBuilder_.Append("api/ServersApi/{id}/config");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -563,7 +547,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task GetConfigAsync(string id, string configName, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/ServersApi/{id}/config/{configName}");
+            urlBuilder_.Append("api/ServersApi/{id}/config/{configName}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{configName}", System.Uri.EscapeDataString(ConvertToString(configName, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -633,7 +617,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task UpdateConfigAsync(string id, string configName, string newContents, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/ServersApi/{id}/config/{configName}");
+            urlBuilder_.Append("api/ServersApi/{id}/config/{configName}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{configName}", System.Uri.EscapeDataString(ConvertToString(configName, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -796,13 +780,11 @@ namespace ErisHub.DiscordBot.ApiClient
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.0.6.0 (NJsonSchema v10.0.23.0 (Newtonsoft.Json v11.0.0.0))")]
     public partial class PlayersApiClient 
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public PlayersApiClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public PlayersApiClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl; 
             _httpClient = httpClient; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() => 
             {
@@ -810,12 +792,6 @@ namespace ErisHub.DiscordBot.ApiClient
                 UpdateJsonSerializerSettings(settings);
                 return settings;
             });
-        }
-    
-        public string BaseUrl 
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
     
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -836,7 +812,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<PlayerDto>> GetAllAsync(string name, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/PlayersApi/{name}");
+            urlBuilder_.Append("api/PlayersApi/{name}");
             urlBuilder_.Replace("{name}", System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -905,7 +881,7 @@ namespace ErisHub.DiscordBot.ApiClient
                 throw new System.ArgumentNullException("id");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/PlayersApi/{id}");
+            urlBuilder_.Append("api/PlayersApi/{id}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -1059,13 +1035,11 @@ namespace ErisHub.DiscordBot.ApiClient
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.0.6.0 (NJsonSchema v10.0.23.0 (Newtonsoft.Json v11.0.0.0))")]
     public partial class BansApiClient 
     {
-        private string _baseUrl = "";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public BansApiClient(string baseUrl, System.Net.Http.HttpClient httpClient)
+        public BansApiClient(System.Net.Http.HttpClient httpClient)
         {
-            BaseUrl = baseUrl; 
             _httpClient = httpClient; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() => 
             {
@@ -1073,12 +1047,6 @@ namespace ErisHub.DiscordBot.ApiClient
                 UpdateJsonSerializerSettings(settings);
                 return settings;
             });
-        }
-    
-        public string BaseUrl 
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
         }
     
         protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
@@ -1099,7 +1067,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BanDto>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/BansApi");
+            urlBuilder_.Append("api/BansApi");
     
             var client_ = _httpClient;
             try
@@ -1167,7 +1135,7 @@ namespace ErisHub.DiscordBot.ApiClient
                 throw new System.ArgumentNullException("id");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/BansApi/{id}");
+            urlBuilder_.Append("api/BansApi/{id}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -1236,7 +1204,7 @@ namespace ErisHub.DiscordBot.ApiClient
                 throw new System.ArgumentNullException("id");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/BansApi/{id}");
+            urlBuilder_.Append("api/BansApi/{id}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;

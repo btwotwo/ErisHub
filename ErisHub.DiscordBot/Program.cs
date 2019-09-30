@@ -80,6 +80,7 @@ namespace ErisHub.DiscordBot
                 .AddApiClients()
                 .AddCachedRepos()
                 .AddInfrastructure(_config)
+                .AddUserServices()
                 .BuildServiceProvider();
         }
 

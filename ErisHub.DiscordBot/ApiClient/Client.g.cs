@@ -49,7 +49,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task RestartHookAsync(string serverName, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Webhook/{serverName}/restarted");
+            urlBuilder_.Append("webhook/{serverName}/restart");
             urlBuilder_.Replace("{serverName}", System.Uri.EscapeDataString(ConvertToString(serverName, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;

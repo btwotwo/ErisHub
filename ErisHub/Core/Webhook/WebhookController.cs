@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace ErisHub.Core.Webhook
 {
     [Authorize(AuthenticationSchemes = Schemes.ApiKeyScheme)]
+    [Route("webhook")]
     public class WebhookController : ApiController
     {
         private readonly IHubContext<WebhookHub> _hub;
@@ -19,7 +20,7 @@ namespace ErisHub.Core.Webhook
             _hub = hub;
         }
 
-        [HttpGet("{serverName}/restarted")]
+        [HttpGet("{serverName}/restart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> RestartHook(string serverName)
         {

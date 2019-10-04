@@ -11,6 +11,7 @@ using ErisHub.DiscordBot.Util;
 using ErisHub.Shared.SingalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ErisHub.DiscordBot.Modules.Watcher
 {
@@ -21,11 +22,12 @@ namespace ErisHub.DiscordBot.Modules.Watcher
         private readonly HubConnection _connection;
         private readonly BotContext _db;
         private readonly ServersApiClient _api;
-        public WatcherModule(BaseSocketClient discordClient, BotContext context, ServersApiClient api)
+        public WatcherModule(BaseSocketClient discordClient, BotContext context, ServersApiClient api, IConfiguration config)
         {
+            var webhookUrl = config["HubApiUrl"] + "/webhookHub";
             _discordClient = discordClient;
             _connection = new HubConnectionBuilder()
-                .WithUrl("https://localhost:44303/webhookHub")
+                .WithUrl(webhookUrl)
                 .Build();
 
             _db = context;

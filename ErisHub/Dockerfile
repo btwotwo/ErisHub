@@ -1,11 +1,12 @@
-FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
 WORKDIR /app
 EXPOSE 62907
 EXPOSE 44303
 
-FROM microsoft/dotnet:2.1-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 COPY ["ErisHub/ErisHub.csproj", "ErisHub/"]
+COPY ["ErisHub.Shared/ErisHub.Shared.csproj", "ErisHub.Shared/"]
 RUN dotnet restore "ErisHub/ErisHub.csproj"
 COPY . .
 WORKDIR "/src/ErisHub"

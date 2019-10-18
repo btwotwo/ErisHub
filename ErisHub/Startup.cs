@@ -63,11 +63,11 @@ namespace ErisHub
             }
             else
             {
-                app.UseHsts();
+            //     app.UseHsts();
             }
 
             app.UseSignalR(routes => routes.MapHub<WebhookHub>("/webhookHub"));
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseMvc();
             app.UseOpenApi();
         }

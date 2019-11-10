@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -21,10 +22,11 @@ namespace ErisHub.DiscordBot.Modules.Watcher
         private readonly BaseSocketClient _discordClient;
         private readonly HubConnection _connection;
         private readonly BotContext _db;
-        private readonly ServersApiClient _api;
-        public WatcherModule(BaseSocketClient discordClient, BotContext context, ServersApiClient api, IConfiguration config)
+        private readonly ServersClient _api;
+        public WatcherModule(BaseSocketClient discordClient, BotContext context, ServersClient api, IConfiguration config)
         {
-            var webhookUrl = config["HubApiUrl"] + "/webhookHub";
+            var hubApiUrl = new Uri(config["HubApiUrl"]);
+            Uri.TryCreate(hubApiUrl, "/webhookHub", out var webhookUrl);
             _discordClient = discordClient;
             _connection = new HubConnectionBuilder()
                 .WithUrl(webhookUrl)
@@ -33,24 +35,7 @@ namespace ErisHub.DiscordBot.Modules.Watcher
             _db = context;
             _api = api;
             _connection.StartAsync().Wait();
-            _connection.On<string>(WebhookEvents.ServerRestart, async (serverName) =>
-            {
-                var server = await _db.WatcherSettings.SingleOrDefaultAsync(x => x.Server == serverName);
-
-                if (server == null)
-                {
-                    return;
-                }
-
-                if (server.Watching)
-                {
-                    var channel = _discordClient.GetChannel(server.ChannelId) as IMessageChannel;
-                    var guild = (channel as IGuildChannel).Guild;
-                    var role = guild.GetRole(server.MentionRoleId);
-
-                    await channel.SendMessageAsync($"{role.Mention} {server.Message}");
-                }
-            });
+            _connection.On<string>(WebhookEvents.ServerRestart, async (serverName) => await HandleWebhookNotification(serverName));
         }
 
 
@@ -193,6 +178,30 @@ Message: ``{setting.Message}``
         }
 
         private async Task<List<string>> GetServerNamesAsync() => (await _api.GetAllServersAsync()).Select(x => x.Name).ToList();
+
+        private async Task HandleWebhookNotification(string serverName)
+        {
+            var server = await _db.WatcherSettings.SingleOrDefaultAsync(x => x.Server == serverName);
+
+            if (server == null)
+            {
+                return;
+            }
+
+            var shouldNotify = server.Watching && DateTime.Now - server.LastRestart.GetValueOrDefault() > TimeSpan.FromSeconds(30);
+
+            if (shouldNotify)
+            {
+                var channel = _discordClient.GetChannel(server.ChannelId) as IMessageChannel;
+                var guild = (channel as IGuildChannel).Guild;
+                var role = guild.GetRole(server.MentionRoleId);
+                server.LastRestart = DateTime.Now;
+
+                await _db.SaveChangesAsync();
+
+                await channel.SendMessageAsync($"{role.Mention} {server.Message}");
+            }
+        }
         
     }
 }

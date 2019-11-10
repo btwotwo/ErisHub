@@ -5,12 +5,6 @@
       "environmentVariables": {
         "BOT_ENV": "Development"
       }
-    },
-    "Docker": {
-      "commandName": "Docker",
-      "environmentVariables": {
-        "BOT_ENV": "Development"
-      }
     }
   }
 }

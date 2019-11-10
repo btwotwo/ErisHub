@@ -194,12 +194,12 @@ namespace ErisHub.DiscordBot.ApiClient
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.0.6.0 (NJsonSchema v10.0.23.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class ServersApiClient 
+    public partial class ServersClient 
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public ServersApiClient(System.Net.Http.HttpClient httpClient)
+        public ServersClient(System.Net.Http.HttpClient httpClient)
         {
             _httpClient = httpClient; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() => 
@@ -228,7 +228,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Server>> GetAllServersAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/ServersApi");
+            urlBuilder_.Append("api/Servers");
     
             var client_ = _httpClient;
             try
@@ -293,7 +293,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task GetServerAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/ServersApi/{id}");
+            urlBuilder_.Append("api/Servers/{id}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -356,7 +356,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<StatusModel>> GetStatusesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/ServersApi/statuses");
+            urlBuilder_.Append("api/Servers/statuses");
     
             var client_ = _httpClient;
             try
@@ -421,7 +421,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task GetSingleServerStatusAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/ServersApi/{id}/status");
+            urlBuilder_.Append("api/Servers/{id}/status");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -484,7 +484,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task GetConfigNamesAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/ServersApi/{id}/config");
+            urlBuilder_.Append("api/Servers/{id}/config");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -547,7 +547,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task GetConfigAsync(string id, string configName, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/ServersApi/{id}/config/{configName}");
+            urlBuilder_.Append("api/Servers/{id}/config/{configName}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{configName}", System.Uri.EscapeDataString(ConvertToString(configName, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -617,7 +617,7 @@ namespace ErisHub.DiscordBot.ApiClient
         public async System.Threading.Tasks.Task UpdateConfigAsync(string id, string configName, string newContents, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/ServersApi/{id}/config/{configName}");
+            urlBuilder_.Append("api/Servers/{id}/config/{configName}");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{configName}", System.Uri.EscapeDataString(ConvertToString(configName, System.Globalization.CultureInfo.InvariantCulture)));
     

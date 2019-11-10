@@ -12,13 +12,13 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace ErisHub.Core.Server
 {
-    public class ServersApiController : ApiController
+    public class ServersController : ApiController
     {
         private readonly ServerStore _servers;
         private readonly IMemoryCache _cache;
         private const string StatusCommand = "status";
 
-        public ServersApiController(ServerStore servers, IMemoryCache cache)
+        public ServersController(ServerStore servers, IMemoryCache cache)
         {
             _servers = servers;
             _cache = cache;

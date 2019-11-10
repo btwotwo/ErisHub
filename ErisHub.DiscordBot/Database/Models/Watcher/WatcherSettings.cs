@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ErisHub.DiscordBot.Database.Models.Watcher
 {
@@ -18,5 +19,7 @@ namespace ErisHub.DiscordBot.Database.Models.Watcher
 
         [Required]
         public bool Watching { get; set; }
+
+        public DateTime? LastRestart { get; set; } 
     }
 }

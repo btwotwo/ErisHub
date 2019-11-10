@@ -23,10 +23,10 @@ namespace ErisHub.DiscordBot.Modules.Server
         private readonly BaseSocketClient _discord;
         private readonly ILogger _logger;
         private readonly IConfiguration _config;
-        private readonly ServersApiClient _api;
+        private readonly ServersClient _api;
 
 
-        public StatusService(ServersApiClient api, BaseSocketClient discord, IConfiguration config,
+        public StatusService(ServersClient api, BaseSocketClient discord, IConfiguration config,
             ILoggerFactory loggerFactory)
         {
             _api = api;

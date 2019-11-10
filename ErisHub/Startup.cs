@@ -67,7 +67,6 @@ namespace ErisHub
             }
 
             app.UseSignalR(routes => routes.MapHub<WebhookHub>("/webhookHub"));
-            app.UseHttpsRedirection();
             app.UseMvc();
             app.UseOpenApi();
         }

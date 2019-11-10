@@ -130,7 +130,7 @@ namespace ErisHub.DiscordBot
             return provider
                 .AddSingleton<BansApiClient>()
                 .AddSingleton<PlayersApiClient>()
-                .AddSingleton<ServersApiClient>();
+                .AddSingleton<ServersClient>();
         }
 
         public static IServiceCollection AddCachedRepos(this IServiceCollection provider)

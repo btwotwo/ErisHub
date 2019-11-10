@@ -63,7 +63,7 @@ namespace ErisHub
             }
             else
             {
-                app.UseHsts();
+            //     app.UseHsts();
             }
 
             app.UseSignalR(routes => routes.MapHub<WebhookHub>("/webhookHub"));

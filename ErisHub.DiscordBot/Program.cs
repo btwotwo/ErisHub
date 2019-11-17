@@ -6,6 +6,7 @@ using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using EFCore.DbContextFactory.Extensions;
 using ErisHub.DiscordBot.ApiClient;
 using ErisHub.DiscordBot.Database;
 using ErisHub.DiscordBot.Database.Models;
@@ -122,6 +123,10 @@ namespace ErisHub.DiscordBot
                 .AddSingleton<CommandHandlingService>()
                 .AddSingleton<InteractiveService>()
                 .AddSingleton(apiHttpClient);
+
+
+            provider.AddDbContextFactory<BotContext>(o => { o.UseSqlite(connectionString); });
+
             return provider;
         }
 

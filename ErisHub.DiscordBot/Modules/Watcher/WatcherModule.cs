@@ -215,8 +215,6 @@ Message: ``{setting.Message}``
 
                         await db.SaveChangesAsync();
 
-                        await Task.Delay(TimeSpan.FromSeconds(10));
-
                         await channel.SendMessageAsync($"{role.Mention} {server.Message}");
                     }
                 }

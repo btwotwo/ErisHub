@@ -204,7 +204,7 @@ Message: ``{setting.Message}``
 
                     var server = await db.WatcherSettings.SingleAsync(x => x.Server == serverName);
 
-                    var shouldNotify = server.Watching && DateTime.Now - server.LastRestart.GetValueOrDefault() > TimeSpan.FromSeconds(30);
+                    var shouldNotify = server.Watching && DateTime.Now - server.LastRestart.GetValueOrDefault() > TimeSpan.FromMinutes(2);
 
                     if (shouldNotify)
                     {

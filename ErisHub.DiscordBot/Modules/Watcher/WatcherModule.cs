@@ -15,6 +15,7 @@ using ErisHub.Shared.SingalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace ErisHub.DiscordBot.Modules.Watcher
 {
@@ -26,8 +27,9 @@ namespace ErisHub.DiscordBot.Modules.Watcher
         private readonly Func<BotContext> _dbFactory;
         private readonly BotContext _db;
         private readonly ServersClient _api;
+        private readonly ILogger<WatcherModule> _logger;
         private readonly ConcurrentDictionary<string, SemaphoreSlim> _semaphores;
-        public WatcherModule(BaseSocketClient discordClient,  ServersClient api, IConfiguration config, Func<BotContext> factory, BotContext db)
+        public WatcherModule(BaseSocketClient discordClient, ServersClient api, IConfiguration config, Func<BotContext> factory, BotContext db, ILogger<WatcherModule> logger)
         {
             var hubApiUrl = new Uri(config["HubApiUrl"]);
             Uri.TryCreate(hubApiUrl, "/webhookHub", out var webhookUrl);
@@ -39,9 +41,10 @@ namespace ErisHub.DiscordBot.Modules.Watcher
             _dbFactory = factory;
             _db = db;
             _api = api;
+            _logger = logger;
             _semaphores = new ConcurrentDictionary<string, SemaphoreSlim>();
             _connection.StartAsync().Wait();
-            _connection.On<string>(WebhookEvents.ServerRestart, async (serverName) => await HandleWebhookNotification(serverName));
+            _connection.On<string, string>(WebhookEvents.ServerRestart, async (serverName, guid) => await HandleWebhookNotification(serverName, guid));
         }
 
 
@@ -185,8 +188,10 @@ Message: ``{setting.Message}``
 
         private async Task<List<string>> GetServerNamesAsync() => (await _api.GetAllServersAsync()).Select(x => x.Name).ToList();
 
-        private async Task HandleWebhookNotification(string serverName)
+        private async Task HandleWebhookNotification(string serverName, string guid)
         {
+            _logger.LogInformation($"Got {serverName} with id {guid}");
+
             using(var db = _dbFactory())
             {
                 var serverExists = await db.WatcherSettings.AnyAsync(x => x.Server == serverName);

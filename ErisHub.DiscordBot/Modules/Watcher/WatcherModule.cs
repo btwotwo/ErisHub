@@ -209,7 +209,7 @@ Message: ``{setting.Message}``
 
                     var server = await db.WatcherSettings.SingleAsync(x => x.Server == serverName);
 
-                    var shouldNotify = server.Watching && DateTime.Now - server.LastRestart.GetValueOrDefault() > TimeSpan.FromSeconds(30);
+                    var shouldNotify = server.Watching && DateTime.Now - server.LastRestart.GetValueOrDefault() > TimeSpan.FromMinutes(2);
 
                     if (shouldNotify)
                     {
@@ -219,8 +219,6 @@ Message: ``{setting.Message}``
                         server.LastRestart = DateTime.Now;
 
                         await db.SaveChangesAsync();
-
-                        await Task.Delay(TimeSpan.FromSeconds(10));
 
                         await channel.SendMessageAsync($"{role.Mention} {server.Message}");
                     }

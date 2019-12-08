@@ -13,6 +13,7 @@ using ErisHub.DiscordBot.Database.Models;
 using ErisHub.DiscordBot.Database.Models.Newcomer;
 using ErisHub.DiscordBot.Modules.Newcomer;
 using ErisHub.DiscordBot.Modules.Server;
+using ErisHub.DiscordBot.Modules.Watcher;
 using ErisHub.DiscordBot.Services;
 using ErisHub.DiscordBot.Util.CachedDbEntity;
 using ErisHub.DiscordBot.Util.CachedRepo;
@@ -59,6 +60,7 @@ namespace ErisHub.DiscordBot
 
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
             services.GetRequiredService<NewcomerHandler>().Init();
+            await services.GetRequiredService<WatcherService>().InitAsync();
 
 
             await Task.Delay(-1);
@@ -122,6 +124,7 @@ namespace ErisHub.DiscordBot
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandlingService>()
                 .AddSingleton<InteractiveService>()
+                .AddSingleton<WatcherService>()
                 .AddSingleton(apiHttpClient);
 
 

@@ -16,6 +16,7 @@ using ErisHub.DiscordBot.Modules.Server;
 using ErisHub.DiscordBot.Services;
 using ErisHub.DiscordBot.Util.CachedDbEntity;
 using ErisHub.DiscordBot.Util.CachedRepo;
+using ErisHub.DiscordBot.Util.Timer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +43,6 @@ namespace ErisHub.DiscordBot
             _client = new DiscordSocketClient();
 
             _client.Ready += NotifyRestart;
-
             _config = BuildConfig();
 
             _configObject = new Config();
@@ -148,13 +148,17 @@ namespace ErisHub.DiscordBot
         {
             return provider
                 .AddSingleton<StatusService>()
+                .AddSingleton<WaitingTimer>()
                 .AddSingleton<NewcomerHandler>();
         }
 
         public static IServiceCollection AddInfrastructure(this IServiceCollection provider, IConfiguration config)
         {
             return provider
-                .AddLogging(builder => builder.AddConsole())
+                .AddLogging(builder => 
+                {
+                    builder.AddConsole();
+                })
                 .AddSingleton<LoggingService>()
                 .AddSingleton(config);
         }

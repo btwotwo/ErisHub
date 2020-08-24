@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using ErisHub.DiscordBot.ApiClient;
+using ErisHub.DiscordBot.Util.Timer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -15,9 +16,11 @@ namespace ErisHub.DiscordBot.Modules.Server
 {
     public class StatusService
     {
-        private Timer _statusUpdateTimer;
+        private readonly IWaitingTimer _waitingTimer;
+
         private IUserMessage _statusMessage;
         private IEnumerable<StatusModel> _statuses;
+        private CancellationTokenSource _tokenSource;
         private readonly HashSet<string> _hidden;
 
         private readonly BaseSocketClient _discord;
@@ -27,13 +30,14 @@ namespace ErisHub.DiscordBot.Modules.Server
 
 
         public StatusService(ServersClient api, BaseSocketClient discord, IConfiguration config,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory, IWaitingTimer waitingTimer)
         {
             _api = api;
             _config = config;
             _discord = discord;
             _logger = loggerFactory.CreateLogger("Status updater");
             _hidden = new HashSet<string>();
+            _waitingTimer = waitingTimer;
         }
 
         public async Task StartAsync()
@@ -46,25 +50,24 @@ namespace ErisHub.DiscordBot.Modules.Server
                 _statusMessage = await channel.SendMessageAsync("", false, GenerateEmbed());
             }
 
-            if (_statusUpdateTimer != null)
+            if (_waitingTimer.IsRunning())
             {
                 throw new StatusException("Already started");
             }
 
-            _statusUpdateTimer = new Timer(UpdateAsync, null, 0, Timeout.Infinite);
+            _tokenSource = new CancellationTokenSource();
+            _waitingTimer.RunPeriodically(UpdateAsync, TimeSpan.FromSeconds(10), _tokenSource.Token);
         }
 
         public async Task StopAsync()
         {
-            if (_statusUpdateTimer == null)
+            if (_waitingTimer.IsRunning() == false)
             {
                 throw new StatusException("Already stopped.");
             }
 
-            _statusUpdateTimer.Dispose();
-            _statusUpdateTimer = null;
+            _tokenSource.Cancel();
             await _statusMessage.DeleteAsync();
-            _statusMessage = null;
         }
 
         public void Hide(string serverName)
@@ -103,7 +106,7 @@ namespace ErisHub.DiscordBot.Modules.Server
             }
         }
 
-        private async void UpdateAsync(object state)
+        private async Task UpdateAsync()
         {
             try
             {
@@ -113,10 +116,6 @@ namespace ErisHub.DiscordBot.Modules.Server
             catch (Exception e)
             {
                 _logger.LogError(default(EventId), e, "Error while updating message");
-            }
-            finally
-            {
-                _statusUpdateTimer?.Change(10000, Timeout.Infinite);
             }
         }
 

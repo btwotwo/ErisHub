@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  erishub:
+    image: ${DOCKER_REGISTRY-}erishub
+    build:
+      context: .
+      dockerfile: ErisHub/Dockerfile
+
+  erishub.discordbot:
+    image: ${DOCKER_REGISTRY-}erishubdiscordbot
+    build:
+      context: .
+      dockerfile: ErisHub.DiscordBot/Dockerfile

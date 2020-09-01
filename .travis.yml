@@ -3,5 +3,5 @@ solution: ErisHub.sln
 mono: none
 dotnet: 3.1
 script:
- - dotnet restore
- - dotnet build
+ - dotnet restore ErisHub.sln
+ - dotnet build ErisHub.sln

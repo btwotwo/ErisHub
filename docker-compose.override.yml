@@ -8,5 +8,12 @@ services:
       - "80"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./ErisHub/appsettings.Development.json:/app/appsettings.Development.json
+      - ./serverconfig.Development.json:/app/serverconfig.Develoment.json
   erishub.discordbot:
-
+    environment:
+      - BOT_ENV=Development
+    volumes:
+      - ./ErisHub.DiscordBot/config.json:/app/config.json
+      - ./ErisHub.DiscordBot/config.Develoment.json:/app.config.Develoment.json
+      - ./ErisHub.DiscordBot/bot.db

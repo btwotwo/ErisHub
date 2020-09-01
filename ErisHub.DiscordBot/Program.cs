@@ -28,9 +28,9 @@ namespace ErisHub.DiscordBot
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            new Program().MainAsync().GetAwaiter().GetResult();
+            await new Program().MainAsync();
         }
 
 
@@ -116,6 +116,7 @@ namespace ErisHub.DiscordBot
             };
 
             provider.AddSingleton(config)
+                .AddSingleton<IWaitingTimer, WaitingTimer>()
                 .AddSingleton<BaseSocketClient>(client)
                 .AddDbContext<BotContext>(builder => builder.UseSqlite(connectionString))
                 .AddSingleton<CommandService>()
@@ -148,7 +149,6 @@ namespace ErisHub.DiscordBot
         {
             return provider
                 .AddSingleton<StatusService>()
-                .AddSingleton<WaitingTimer>()
                 .AddSingleton<NewcomerHandler>();
         }
 

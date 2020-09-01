@@ -26,7 +26,7 @@ namespace ErisHub.Core.Players
         [HttpGet("{name}")]
         public ActionResult<List<PlayerDto>> GetAll(string name)
         {
-            var players = _db.Players.Select(player => _mapper.Map<PlayerDto>(player));
+            var players = _db.Players.AsQueryable().Select(player => _mapper.Map<PlayerDto>(player));
             if (name != null)
             {
                 players = players.Where(x => x.Ckey == name);
@@ -44,7 +44,7 @@ namespace ErisHub.Core.Players
                 return BadRequest(ModelState);
             }
 
-            var player = await _db.Players
+            var player = await _db.Players.AsQueryable()
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (player == null)

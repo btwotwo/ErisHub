@@ -25,7 +25,7 @@ namespace ErisHub.Core.Bans
         [HttpGet]
         public async Task<ActionResult<List<BanDto>>> Get()
         {
-            var bans = await _context.Bans
+            var bans = await _context.Bans.AsQueryable()
                 .Include(x => x.BannedBy)
                 .Include(x => x.Target)
                 .Include(x => x.UnbannedBy).ToListAsync();
@@ -54,7 +54,7 @@ namespace ErisHub.Core.Bans
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] BanDto editBan)
         {
-            var ban = await _context.Bans.SingleOrDefaultAsync(x => x.Id == id);
+            var ban = await _context.Bans.AsQueryable().SingleOrDefaultAsync(x => x.Id == id);
 
             if (ban == null)
             {

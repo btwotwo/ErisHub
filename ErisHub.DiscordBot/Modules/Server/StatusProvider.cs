@@ -9,6 +9,7 @@ namespace ErisHub.DiscordBot.Modules.Server
     public interface IStatusProvider
     {
         Task<StatusModel?> GetByNameOrDefaultAsync(string name);
+        Task<IEnumerable<StatusModel>> GetStatusesAsync();
     }
     public class StatusProvider : IStatusProvider
     {
@@ -20,5 +21,6 @@ namespace ErisHub.DiscordBot.Modules.Server
         }
 
         public async Task<StatusModel?> GetByNameOrDefaultAsync(string name) => await _serversClient.GetSingleServerStatusAsync(name);
+        public async Task<IEnumerable<StatusModel>> GetStatusesAsync() => await _serversClient.GetStatusesAsync();
     }
 }

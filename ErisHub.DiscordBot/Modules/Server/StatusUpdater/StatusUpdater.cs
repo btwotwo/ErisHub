@@ -16,18 +16,18 @@ namespace ErisHub.DiscordBot.Modules.Server
 
         private readonly ILogger _logger;
         private readonly IWaitingTimer _waitingTimer;
-        private readonly ServersClient _api;
         private readonly IStatusMessage _statusMessage;
         private readonly IStatusHider _statusHider;
+        private readonly IStatusProvider _statusProvider;
         private CancellationTokenSource _tokenSource;
 
-        public StatusUpdater(ILoggerFactory loggerFactory, IWaitingTimerProvider waitingTimerProvider, Config config, ServersClient api, IStatusMessageFactory statusMessageFactory, IStatusHider statusHider)
+        public StatusUpdater(ILoggerFactory loggerFactory, IWaitingTimerProvider waitingTimerProvider, Config config, IStatusMessageFactory statusMessageFactory, IStatusHider statusHider, IStatusProvider statusProvider)
         {
-            _api = api;
             _logger = loggerFactory.CreateLogger<StatusUpdater>();
             _waitingTimer = waitingTimerProvider.GetOrCreate(StatusServiceId);
             _statusMessage = statusMessageFactory.Create(config.StatusChannelId);
             _statusHider = statusHider;
+            _statusProvider = statusProvider;
         }
 
         public async Task<Error?> StartAsync()
@@ -75,7 +75,7 @@ namespace ErisHub.DiscordBot.Modules.Server
         {
             try
             {
-                var statuses = (await _api.GetStatusesAsync()).ToArray();
+                var statuses = (await _statusProvider.GetStatusesAsync()).ToArray();
                 return statuses.Where(x => _statusHider.Hidden(x) == false).OrderBy(x => x.Name);
             }
             catch (Exception e)

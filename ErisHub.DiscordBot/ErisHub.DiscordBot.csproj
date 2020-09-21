@@ -61,6 +61,10 @@
     <ProjectReference Include="..\ErisHub.Shared\ErisHub.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\Server\StatusProvider\" />
+  </ItemGroup>
+
   <Target Name="NSwag" BeforeTargets="PrepareForBuild" Condition="'$(Configuration)' == 'Debug'">
     <Exec Command="$(NSwagExe_Core31) run nswag.json /variables:Configuration=$(Configuration)" />
   </Target>

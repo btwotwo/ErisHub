@@ -148,7 +148,9 @@ namespace ErisHub.DiscordBot
         public static IServiceCollection AddUserServices(this IServiceCollection provider)
         {
             return provider
-                .AddSingleton<StatusService>()
+                .AddSingleton<IStatusUpdater, StatusUpdater>()
+                .AddSingleton<IStatusProvider, StatusProvider>()
+                .AddSingleton<IStatusMessageFactory, StatusMessageFactory>()
                 .AddSingleton<NewcomerHandler>();
         }
 

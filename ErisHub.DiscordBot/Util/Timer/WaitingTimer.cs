@@ -8,8 +8,7 @@ namespace ErisHub.DiscordBot.Util.Timer
 {
     public interface IWaitingTimer
     {
-        public bool RunPeriodically(Func<Task> callback, TimeSpan timeSpan, CancellationToken cancellationToken);
-
+        public bool RunPeriodically(Func<Task> callback, TimeSpan timeSpan, CancellationToken cancellationToken = default);
         public bool IsRunning();
     }
 
@@ -22,7 +21,7 @@ namespace ErisHub.DiscordBot.Util.Timer
             return _running;
         }
 
-        public bool RunPeriodically(Func<Task> callback, TimeSpan timeSpan, CancellationToken cancellationToken)
+        public bool RunPeriodically(Func<Task> callback, TimeSpan timeSpan, CancellationToken cancellationToken = default)
         {
             if (IsRunning())
             {
@@ -32,7 +31,14 @@ namespace ErisHub.DiscordBot.Util.Timer
             _running = true;
             cancellationToken.Register(() => _running = false);
 
-            var task = Task.Factory.StartNew(async (_) =>
+            Task.Run(async () => await ProcessTask(callback, timeSpan, cancellationToken), cancellationToken);
+
+            return true;
+        }
+
+        private async Task ProcessTask(Func<Task> callback, TimeSpan timeSpan, CancellationToken cancellationToken)
+        {
+            try
             {
                 while (true)
                 {
@@ -44,9 +50,11 @@ namespace ErisHub.DiscordBot.Util.Timer
                     await callback();
                     await Task.Delay(timeSpan);
                 }
-            }, cancellationToken, TaskCreationOptions.LongRunning);
-
-            return true;
+            }
+            catch (OperationCanceledException)
+            {
+                _running = false;
+            }
         }
     }
 }

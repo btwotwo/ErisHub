@@ -1,6 +1,7 @@
 ﻿using Discord;
 using ErisHub.DiscordBot.ApiClient;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ErisHub.DiscordBot.Modules.Server
@@ -21,12 +22,17 @@ namespace ErisHub.DiscordBot.Modules.Server
         public async Task<ulong> TryCreateFromIdAsync(ulong id)
         {
             var channel = await _discordClient.GetChannelAsync(_channelId);
-            if (!(channel is IMessageChannel messageChannel))
+            if (channel is not IMessageChannel messageChannel)
             {
                 throw new InvalidChannelStatusException(_channelId);
             }
 
-            var message = (await messageChannel.GetMessageAsync(id) as IUserMessage) ?? (await messageChannel.SendMessageAsync("Updating..."));
+            var message = id switch
+            {
+                0 => null,
+                _ => await messageChannel.GetMessageAsync(id) as IUserMessage
+            } ?? await messageChannel.SendMessageAsync("Updating...");
+
             _message = message;
 
             return _message.Id;
@@ -34,8 +40,14 @@ namespace ErisHub.DiscordBot.Modules.Server
 
         public async Task UpdateAsync(IEnumerable<StatusModel> statuses)
         {
-            var embed = GenerateEmbed(statuses);
-            await _message.ModifyAsync(msg => msg.Embed = embed);
+            if (statuses.Any())
+            {
+                var embed = GenerateEmbed(statuses);
+                await _message.ModifyAsync(msg => msg.Embed = embed);
+                return;
+            }
+
+            await _message.ModifyAsync(msg => msg.Content = "Server list is empty.");
         }
 
         private Embed GenerateEmbed(IEnumerable<StatusModel> statuses)

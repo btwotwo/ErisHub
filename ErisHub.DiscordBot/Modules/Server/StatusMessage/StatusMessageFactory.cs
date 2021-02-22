@@ -11,9 +11,6 @@ namespace ErisHub.DiscordBot.Modules.Server
             _discordClient = discordClient;
         }
 
-        public IStatusMessage Create(ulong channelId)
-        {
-            return new StatusMessage(channelId, _discordClient);
-        }
+        public IStatusMessage Create(ulong channelId) => new StatusMessage(channelId, _discordClient);
     }
 }

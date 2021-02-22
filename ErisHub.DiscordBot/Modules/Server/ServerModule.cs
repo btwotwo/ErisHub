@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Discord.Commands;
+using System;
 using System.Threading.Tasks;
-using Discord.Commands;
-using ErisHub.DiscordBot.ApiClient;
 
 namespace ErisHub.DiscordBot.Modules.Server
 {

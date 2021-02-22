@@ -24,6 +24,9 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 
+// todo: bot can't access hub
+// check if the status update is working
+
 namespace ErisHub.DiscordBot
 {
     public class Program
@@ -116,8 +119,9 @@ namespace ErisHub.DiscordBot
             };
 
             provider.AddSingleton(config)
-                .AddSingleton<IWaitingTimer, WaitingTimer>()
+                .AddSingleton<IWaitingTimerProvider, WaitingTimerProvider>()
                 .AddSingleton<BaseSocketClient>(client)
+                .AddSingleton<IDiscordClient>(client)
                 .AddDbContext<BotContext>(builder => builder.UseSqlite(connectionString))
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandlingService>()
@@ -125,7 +129,7 @@ namespace ErisHub.DiscordBot
                 .AddSingleton(apiHttpClient);
 
 
-            provider.AddDbContextFactory<BotContext>(o => { o.UseSqlite(connectionString); });
+            provider.AddDbContextFactory<BotContext>(o => o.UseSqlite(connectionString));
 
             return provider;
         }
@@ -151,6 +155,7 @@ namespace ErisHub.DiscordBot
                 .AddSingleton<IStatusUpdater, StatusUpdater>()
                 .AddSingleton<IStatusProvider, StatusProvider>()
                 .AddSingleton<IStatusMessageFactory, StatusMessageFactory>()
+                .AddSingleton<IStatusHider, StatusHider>()
                 .AddSingleton<NewcomerHandler>();
         }
 

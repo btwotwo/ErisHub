@@ -1,14 +1,17 @@
 version: '3.4'
 
 services:
-  erishub:
-    image: ${DOCKER_REGISTRY-}erishub
+  hub:
+    image: ${DOCKER_REGISTRY-}hub
     build:
       context: .
       dockerfile: ErisHub/Dockerfile
+    command: "--environment=Production"
 
-  erishub.discordbot:
-    image: ${DOCKER_REGISTRY-}erishubdiscordbot
+  bot:
+    image: ${DOCKER_REGISTRY-}bot
     build:
       context: .
       dockerfile: ErisHub.DiscordBot/Dockerfile
+    depends_on: 
+    - hub

@@ -66,7 +66,9 @@ namespace ErisHub
             //     app.UseHsts();
             }
 
-            app.UseOpenApi();
+            app.UseRouting()
+                .UseEndpoints(e => e.MapControllers())
+                .UseOpenApi();
         }
     }
 }

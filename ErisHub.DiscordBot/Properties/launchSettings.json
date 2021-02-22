@@ -6,7 +6,7 @@
         "BOT_ENV": "Development"
       }
     },
-    "Docker (1)": {
+    "docker-compose": {
       "commandName": "Docker"
     }
   }

@@ -32,13 +32,13 @@ namespace ErisHub.Database.Models
                 entity.ToTable("bans");
 
                 entity.HasIndex(e => e.BannedById)
-                    .HasName("index_bans_on_banned_by_id");
+                    .HasDatabaseName("index_bans_on_banned_by_id");
 
                 entity.HasIndex(e => e.TargetId)
-                    .HasName("index_bans_on_target_id");
+                    .HasDatabaseName("index_bans_on_target_id");
 
                 entity.HasIndex(e => e.UnbannedById)
-                    .HasName("index_bans_on_unbanned_by_id");
+                    .HasDatabaseName("index_bans_on_unbanned_by_id");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -126,7 +126,7 @@ namespace ErisHub.Database.Models
                 entity.ToTable("books");
 
                 entity.HasIndex(e => e.AuthorId)
-                    .HasName("index_books_on_author_id");
+                    .HasDatabaseName("index_books_on_author_id");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -227,7 +227,7 @@ namespace ErisHub.Database.Models
                 entity.ToTable("poll_options");
 
                 entity.HasIndex(e => e.PollId)
-                    .HasName("index_poll_options_on_poll_id");
+                    .HasDatabaseName("index_poll_options_on_poll_id");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -289,10 +289,10 @@ namespace ErisHub.Database.Models
                 entity.ToTable("poll_text_replies");
 
                 entity.HasIndex(e => e.PlayerId)
-                    .HasName("index_poll_text_replies_on_player_id");
+                    .HasDatabaseName("index_poll_text_replies_on_player_id");
 
                 entity.HasIndex(e => e.PollId)
-                    .HasName("index_poll_text_replies_on_poll_id");
+                    .HasDatabaseName("index_poll_text_replies_on_poll_id");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -330,13 +330,13 @@ namespace ErisHub.Database.Models
                 entity.ToTable("poll_votes");
 
                 entity.HasIndex(e => e.OptionId)
-                    .HasName("index_poll_votes_on_option_id");
+                    .HasDatabaseName("index_poll_votes_on_option_id");
 
                 entity.HasIndex(e => e.PlayerId)
-                    .HasName("index_poll_votes_on_player_id");
+                    .HasDatabaseName("index_poll_votes_on_player_id");
 
                 entity.HasIndex(e => e.PollId)
-                    .HasName("index_poll_votes_on_poll_id");
+                    .HasDatabaseName("index_poll_votes_on_poll_id");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")

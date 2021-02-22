@@ -43,7 +43,11 @@ namespace ErisHub.DiscordBot.Modules.Server
             if (statuses.Any())
             {
                 var embed = GenerateEmbed(statuses);
-                await _message.ModifyAsync(msg => msg.Embed = embed);
+                await _message.ModifyAsync(msg =>
+                {
+                    msg.Embed = embed;
+                    msg.Content = "";
+                });
                 return;
             }
 

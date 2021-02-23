@@ -1564,6 +1564,45 @@ namespace ErisHub.DiscordBot.ApiClient
         [Newtonsoft.Json.JsonProperty("port", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Port { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("webhookConfiguration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public WebhookConfiguration WebhookConfiguration { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.7.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class WebhookConfiguration 
+    {
+        [Newtonsoft.Json.JsonProperty("restartWebhook", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public RestartWebhookConfig RestartWebhook { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("lobbyAlert", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Uri LobbyAlert { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("adminHelp", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Uri AdminHelp { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("adminAlert", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Uri AdminAlert { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("coderAlert", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Uri CoderAlert { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("admiraltyAlert", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Uri AdmiraltyAlert { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.7.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class RestartWebhookConfig 
+    {
+        [Newtonsoft.Json.JsonProperty("url", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Uri Url { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("roleId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long RoleId { get; set; }
+    
     
     }
     

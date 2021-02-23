@@ -45,8 +45,6 @@ namespace ErisHub
             services.AddMemoryCache();
             services.AddSingleton<ServerStore>();
             services.AddSingleton(Configuration);
-            services.AddScoped<WebhookHub>();
-            services.AddSignalR();
             services.AddOpenApiDocument();
             services.AddMvcCore().AddApiExplorer();
 

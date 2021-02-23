@@ -54,7 +54,7 @@ namespace ErisHub.DiscordBot.Modules.Server
             await _message.ModifyAsync(msg => msg.Content = "Server list is empty.");
         }
 
-        private Embed GenerateEmbed(IEnumerable<StatusModel> statuses)
+        private static Embed GenerateEmbed(IEnumerable<StatusModel> statuses)
         {
             var builder = new EmbedBuilder();
             builder.WithColor(Color.Green);

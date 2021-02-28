@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using AutoMapper;
-using ErisHub.Configuration;
+using ErisHub.Configuration.Webhook;
 using ErisHub.Core.Webhook;
 using ErisHub.Database.Models;
 using ErisHub.Helpers;

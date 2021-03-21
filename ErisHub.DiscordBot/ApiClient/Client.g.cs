@@ -1574,7 +1574,7 @@ namespace ErisHub.DiscordBot.ApiClient
     public partial class WebhookConfiguration 
     {
         [Newtonsoft.Json.JsonProperty("restartWebhook", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public RestartWebhookConfig RestartWebhook { get; set; }
+        public RestartWebhook RestartWebhook { get; set; }
     
         [Newtonsoft.Json.JsonProperty("lobbyAlert", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Uri LobbyAlert { get; set; }
@@ -1595,13 +1595,13 @@ namespace ErisHub.DiscordBot.ApiClient
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.7.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class RestartWebhookConfig 
+    public partial class RestartWebhook 
     {
         [Newtonsoft.Json.JsonProperty("url", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Uri Url { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("roleId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public long RoleId { get; set; }
+        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Message { get; set; }
     
     
     }

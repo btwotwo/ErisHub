@@ -15,5 +15,20 @@
   },
   "ConnectionStrings": {
     "Bot": "Data Source=bot.db"
+  },
+  "Serilog": {
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "./Logs/log_bot.txt",
+          "rollingInterval": "Day"
+        }
+      },
+
+      {
+        "Name": "Console"
+      }
+    ]
   }
 }

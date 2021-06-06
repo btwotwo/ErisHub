@@ -22,7 +22,7 @@ namespace ErisHub.DiscordBot.Modules.Kotmap
 
             var kotmapChannelId = configuration.GetValue<ulong>("KotmapChannelId");
 
-            if (kotmapChannelId == default)
+            if (kotmapChannelId == default(ulong))
             {
                 throw new ArgumentNullException("KotmapChannelId is not specified in config");
             }

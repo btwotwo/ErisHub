@@ -11,6 +11,7 @@ using ErisHub.DiscordBot.Util.CachedRepo;
 
 namespace ErisHub.DiscordBot.Modules.Newcomer
 {
+    [RequireUserPermission(GuildPermission.Administrator)]
     [Group("newcomer")]
     public class NewcomerModule : ModuleBase
     {

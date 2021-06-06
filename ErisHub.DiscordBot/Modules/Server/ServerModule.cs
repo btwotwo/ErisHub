@@ -4,6 +4,7 @@ using Discord.Commands;
 namespace ErisHub.DiscordBot.Modules.Server
 {
     [Group("status")]
+    [RequireUserPermission(Discord.GuildPermission.Administrator)]
     public class StatusModule : ModuleBase
     {
         private readonly StatusService _status;

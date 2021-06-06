@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using AutoMapper;
 using ErisHub.Configuration;
-using ErisHub.Core.Webhook;
 using ErisHub.Database.Models;
 using ErisHub.Helpers;
 using ErisHub.Helpers.Auth;
@@ -46,7 +45,6 @@ namespace ErisHub
             services.AddMemoryCache();
             services.AddSingleton<ServerStore>();
             services.AddSingleton(Configuration);
-            services.AddScoped<WebhookHub>();
             services.AddSignalR();
             services.AddOpenApiDocument();
 
@@ -66,7 +64,6 @@ namespace ErisHub
             //     app.UseHsts();
             }
 
-            app.UseSignalR(routes => routes.MapHub<WebhookHub>("/webhookHub"));
             app.UseMvc();
             app.UseOpenApi();
         }

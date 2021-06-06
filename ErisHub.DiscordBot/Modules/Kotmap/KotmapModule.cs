@@ -61,7 +61,7 @@ namespace ErisHub.DiscordBot.Modules.Kotmap
             await ReplyAsync("Message edited");
         }
 
-        string EnrichMessageWithId(string originalMessage, ulong messageId) => originalMessage + $"\n `id: {messageId}`";
+        string EnrichMessageWithId(string originalMessage, ulong messageId) => originalMessage + $"\n`id: {messageId}`";
 
         IMessageChannel GetKotmapChannel() => (IMessageChannel)_discord.GetChannel(_kotmapChannelId);
     } 

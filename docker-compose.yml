@@ -1,17 +1,21 @@
-version: '3.4'
+version: '3.8'
 
 services:
   hub:
-    image: ${DOCKER_REGISTRY-}hub
+    image: eris-hub
     build:
       context: .
       dockerfile: ErisHub/Dockerfile
-    command: "--environment=Production"
+      target: release
+    expose:
+     - "5000"  
+
 
   bot:
-    image: ${DOCKER_REGISTRY-}bot
+    image: eris-bot
     build:
       context: .
       dockerfile: ErisHub.DiscordBot/Dockerfile
+      target: release
     depends_on: 
-    - hub
+      - hub

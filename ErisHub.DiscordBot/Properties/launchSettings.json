@@ -5,6 +5,9 @@
       "environmentVariables": {
         "BOT_ENV": "Development"
       }
+    },
+    "docker-compose": {
+      "commandName": "Docker"
     }
   }
 }

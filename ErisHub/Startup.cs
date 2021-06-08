@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using AutoMapper;
-using ErisHub.Configuration;
+using ErisHub.Configuration.Webhook;
+using ErisHub.Core.Webhook;
 using ErisHub.Database.Models;
 using ErisHub.Helpers;
 using ErisHub.Helpers.Auth;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace ErisHub
 {
@@ -17,7 +19,7 @@ namespace ErisHub
     {
         public IConfiguration Configuration { get; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -32,8 +34,6 @@ namespace ErisHub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
             services.AddDbContext<ErisContext>(options =>
             {
                 options.UseMySql(Configuration.GetConnectionString("Eris"));
@@ -45,15 +45,15 @@ namespace ErisHub
             services.AddMemoryCache();
             services.AddSingleton<ServerStore>();
             services.AddSingleton(Configuration);
-            services.AddSignalR();
             services.AddOpenApiDocument();
+            services.AddMvcCore().AddApiExplorer();
 
             services.AddAuthentication()
                 .AddScheme<ApiKeyOptions, ApiKeyHandler>(Schemes.ApiKeyScheme, opts => opts.ApiKey = Configuration["ApiKey"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -64,8 +64,9 @@ namespace ErisHub
             //     app.UseHsts();
             }
 
-            app.UseMvc();
-            app.UseOpenApi();
+            app.UseRouting()
+                .UseEndpoints(e => e.MapControllers())
+                .UseOpenApi();
         }
     }
 }

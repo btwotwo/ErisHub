@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  hub:
+    image: eris-hub
+    build:
+      context: .
+      dockerfile: ErisHub/Dockerfile
+      target: release
+    expose:
+     - "80"  
+
+
+  bot:
+    image: eris-bot
+    build:
+      context: .
+      dockerfile: ErisHub.DiscordBot/Dockerfile
+      target: release
+    depends_on: 
+      - hub

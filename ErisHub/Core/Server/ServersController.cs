@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Caching.Memory;
+using NSwag.Annotations;
 
 namespace ErisHub.Core.Server
 {
@@ -57,8 +58,7 @@ namespace ErisHub.Core.Server
 
 
         [HttpGet("{id}/status")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<StatusModel>> GetSingleServerStatusAsync(string id)
+        public async Task<ActionResult<StatusModel?>> GetSingleServerStatusAsync(string id)
         {
             var server = _servers.GetServer(id);
 

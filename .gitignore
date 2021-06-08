@@ -305,3 +305,4 @@ testem.log
 Thumbs.db
 config.Development.json
 ErisHub.DiscordBot/bot.db
+/ErisHub.DiscordBot/Logs

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NJsonSchema.Annotations;
+using System;
 
 namespace ErisHub.Core.Server
 {
@@ -9,6 +10,8 @@ namespace ErisHub.Core.Server
         public int Admins { get; set; }
         public string Address { get; set; }
         public string Name { get; set; }
+
+        [CanBeNull]
         public string RoundDuration { get; set; }
     }
 }

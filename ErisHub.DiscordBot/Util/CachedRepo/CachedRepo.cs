@@ -46,7 +46,7 @@ namespace ErisHub.DiscordBot.Util.CachedRepo
 
         private async Task UpdateCacheAsync()
         {
-            Cache = await _db.Set<T>().ToListAsync();
+            Cache = await _db.Set<T>().AsQueryable().ToListAsync();
         }
     }
 }

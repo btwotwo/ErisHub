@@ -6,7 +6,7 @@ using AutoMapper;
 using ErisHub.Core.Players;
 using ErisHub.Database.Models;
 
-namespace ErisHub.Configuration
+namespace ErisHub.Configuration.Webhook
 {
     public class MapperProfile : Profile
     {

@@ -1,7 +1,7 @@
 language: csharp
 solution: ErisHub.sln
 mono: none
-dotnet: 5.0
+dotnet: 7.0
 script:
  - dotnet restore ErisHub.sln
  - dotnet build ErisHub.sln

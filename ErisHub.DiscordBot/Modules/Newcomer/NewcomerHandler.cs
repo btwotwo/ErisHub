@@ -55,7 +55,7 @@ namespace ErisHub.DiscordBot.Modules.Newcomer
         }
 
 
-        private async Task ProcessReactionAsync(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel,
+private async Task ProcessReactionAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> channel,
             SocketReaction reaction)
         {
             var config = _config.CachedValue;

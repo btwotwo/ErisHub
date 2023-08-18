@@ -16,7 +16,7 @@ namespace ErisHub.DiscordBot.Util.CachedRepo
         public CachedRepo(BotContext db)
         {
             _db = db;
-            Cache = _db.Set<T>().ToList();
+            Cache = _db.Set<T>().AsQueryable().ToList();
         }
 
         public async Task AddAsync(T item)

@@ -19,6 +19,6 @@ services:
     volumes:
       - ./ErisHub.DiscordBot/config.json:/app/config.json
       - ./ErisHub.DiscordBot/config.Development.json:/app/config.Development.json
-      - ./ErisHub.DiscordBot/bot.db:/app/bot.db
+      - ./ErisHub.DiscordBot/db:/app/db
     build:
         target: debug

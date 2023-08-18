@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 62907
 EXPOSE 44303
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS restore
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS restore
 WORKDIR /src
 COPY ["ErisHub/ErisHub.csproj", "ErisHub/"]
 COPY ["ErisHub.Shared/ErisHub.Shared.csproj", "ErisHub.Shared/"]

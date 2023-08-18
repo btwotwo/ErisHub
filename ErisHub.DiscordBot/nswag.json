@@ -1,5 +1,5 @@
 ﻿{
-  "runtime": "Net50",
+  "runtime": "Net70",
   "defaultVariables": null,
   "documentGenerator": {
     "aspNetCoreToOpenApi": {
@@ -7,7 +7,6 @@
       "msBuildProjectExtensionsPath": null,
       "configuration": null,
       "runtime": "",
-      "targetFramework": "net5.0",
       "noBuild": false,
       "verbose": true,
       "workingDirectory": null,
